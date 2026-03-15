@@ -24,18 +24,12 @@ api.interceptors.response.use(
     (error) => {
         if (error.response?.status === 401) {
             localStorage.removeItem('token');
-            window.location.href = '/admin/login';
+            // For customer chat, just clear token - don't redirect to admin
+            console.log('Authentication failed - token cleared');
         }
         return Promise.reject(error);
     }
 );
-
-// Auth API
-export const authAPI = {
-    login: (credentials) => api.post('/auth/login', credentials),
-    register: (userData) => api.post('/auth/register', userData),
-    getProfile: () => api.get('/auth/profile'),
-};
 
 // Chat API
 export const chatAPI = {
@@ -43,28 +37,6 @@ export const chatAPI = {
     sendMessage: (data) => api.post('/chat/message', data),
     getHistory: (sessionId) => api.get(`/chat/history/${sessionId}`),
     endConversation: (sessionId) => api.post(`/chat/end/${sessionId}`),
-};
-
-// Dashboard API
-export const dashboardAPI = {
-    getStats: () => api.get('/dashboard/stats'),
-    getTopQuestions: (params) => api.get('/dashboard/top-questions', { params }),
-    getConversations: (params) => api.get('/dashboard/conversations', { params }),
-    getConversationDetails: (id) => api.get(`/dashboard/conversations/${id}`),
-};
-
-// Knowledge API
-export const knowledgeAPI = {
-    uploadDocument: (formData) => api.post('/knowledge/documents', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-    }),
-    getDocuments: (params) => api.get('/knowledge/documents', { params }),
-    deleteDocument: (id) => api.delete(`/knowledge/documents/${id}`),
-
-    createFAQ: (data) => api.post('/knowledge/faqs', data),
-    getFAQs: (params) => api.get('/knowledge/faqs', { params }),
-    updateFAQ: (id, data) => api.put(`/knowledge/faqs/${id}`, data),
-    deleteFAQ: (id) => api.delete(`/knowledge/faqs/${id}`),
 };
 
 export default api;
