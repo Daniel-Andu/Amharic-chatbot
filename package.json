@@ -1,7 +1,7 @@
 {
   "name": "amharic-chatbot-monorepo",
-  "version": "1.0.0",
-  "description": "Amharic Chatbot System - Multi-application deployment",
+  "version": "1.0.1",
+  "description": "Amharic Chatbot System - Multi-application deployment - Fixed for Vercel",
   "private": true,
   "scripts": {
     "install:all": "npm install && npm run install:customer-chat && npm run install:admin-frontend",
