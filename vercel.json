@@ -6,9 +6,7 @@
       "use": "@vercel/static-build",
       "config": {
         "distDir": "build",
-        "installCommand": "cd customer-chat && npm ci --legacy-peer-deps",
-        "buildCommand": "cd customer-chat && GENERATE_SOURCEMAP=false npm run build",
-        "nodeVersion": "16.x"
+        "buildCommand": "cd customer-chat && npm run build:simple"
       }
     }
   ],
