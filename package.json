@@ -1,0 +1,23 @@
+{
+  "name": "amharic-chatbot-monorepo",
+  "version": "1.0.0",
+  "description": "Amharic Chatbot System - Multi-application deployment",
+  "private": true,
+  "scripts": {
+    "install:all": "npm install && npm run install:customer-chat && npm run install:admin-frontend",
+    "install:customer-chat": "cd customer-chat && npm install",
+    "install:admin-frontend": "cd admin-frontend && npm install",
+    "build:customer-chat": "cd customer-chat && npm run build",
+    "build:admin-frontend": "cd admin-frontend && npm run build",
+    "build": "npm run build:customer-chat && npm run build:admin-frontend",
+    "start:customer-chat": "cd customer-chat && npm start",
+    "start:admin-frontend": "cd admin-frontend && npm start"
+  },
+  "workspaces": [
+    "customer-chat",
+    "admin-frontend"
+  ],
+  "devDependencies": {
+    "concurrently": "^7.6.0"
+  }
+}
