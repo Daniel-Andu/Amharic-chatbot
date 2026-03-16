@@ -100,12 +100,22 @@ const ChatWidget = ({ embedded = false }) => {
             }
         } catch (error) {
             console.error('❌ Send message error:', error);
-            toast.error('Failed to send message');
+
+            let errorMessage = language === 'am'
+                ? 'ይቅርታ፣ ችግር ተፈጥሯል። እባክዎ እንደገና ይሞክሩ።'
+                : 'Sorry, something went wrong. Please try again.';
+
+            // Handle timeout specifically
+            if (error.code === 'ECONNABORTED' || error.message.includes('timeout')) {
+                errorMessage = language === 'am'
+                    ? 'ጊዜ አልተሳካም። እባክዎ እንደገና ይሞክሩ።'
+                    : 'Request timed out. Please try again.';
+            }
+
+            toast.error(errorMessage);
             setMessages(prev => [...prev, {
                 type: 'ai',
-                content: language === 'am'
-                    ? 'ይቅርታ፣ ችግር ተፈጥሯል። እባክዎ እንደገና ይሞክሩ።'
-                    : 'Sorry, something went wrong. Please try again.',
+                content: errorMessage,
                 timestamp: new Date()
             }]);
         } finally {

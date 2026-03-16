@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { Toaster } from 'react-hot-toast';
 import Layout from './components/Layout';
 import Dashboard from './components/Dashboard.simple';
+import Login from './pages/Login.simple';
 
 function App() {
     const isAuthenticated = () => {
@@ -18,6 +19,9 @@ function App() {
             <div className="App">
                 <Toaster position="top-right" />
                 <Routes>
+                    {/* Login Route */}
+                    <Route path="/login" element={<Login />} />
+
                     {/* Protected Admin Routes */}
                     <Route
                         path="/"
