@@ -24,7 +24,8 @@ api.interceptors.response.use(
     (error) => {
         if (error.response?.status === 401) {
             localStorage.removeItem('token');
-            window.location.href = '/admin/login';
+            // For Vercel deployment, use relative URL
+            window.location.href = '/login';
         }
         return Promise.reject(error);
     }

@@ -24,7 +24,7 @@ const Layout = ({ children, title }) => {
         e.preventDefault();
         if (searchQuery.trim()) {
             // Navigate to conversations with search query
-            navigate(`/admin/conversations?search=${encodeURIComponent(searchQuery)}`);
+            navigate(`/conversations?search=${encodeURIComponent(searchQuery)}`);
             setShowSearch(false);
             setSearchQuery('');
         }
