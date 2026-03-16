@@ -15,18 +15,6 @@ const ChatWidget = ({ embedded = false }) => {
     const messagesEndRef = useRef(null);
     const recognitionRef = useRef(null);
 
-    useEffect(() => {
-        startConversation();
-    }, [language, startConversation]); // Add startConversation dependency
-
-    useEffect(() => {
-        scrollToBottom();
-    }, [messages]);
-
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    };
-
     const startConversation = useCallback(async () => {
         try {
             const response = await chatAPI.startConversation(language);
@@ -44,6 +32,18 @@ const ChatWidget = ({ embedded = false }) => {
             toast.error('Failed to start conversation');
         }
     }, [language]);
+
+    useEffect(() => {
+        startConversation();
+    }, [startConversation]);
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
 
     const handleSendMessage = async (e) => {
         e.preventDefault();
