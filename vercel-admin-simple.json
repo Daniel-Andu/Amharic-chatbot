@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "buildCommand": "cd admin-frontend && npm run build",
+  "outputDirectory": "admin-frontend/build",
+  "installCommand": "cd admin-frontend && npm install",
+  "framework": "create-react-app"
+}
