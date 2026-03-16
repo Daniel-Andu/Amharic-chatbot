@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell, Search, User, X } from 'lucide-react';
+import { Bell, Search, User } from 'lucide-react';
 
 const Layout = ({ children, title }) => {
     return (
