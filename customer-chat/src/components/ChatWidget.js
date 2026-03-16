@@ -36,7 +36,7 @@ const ChatWidget = ({ embedded = false }) => {
             setMessages([{
                 type: 'ai',
                 content: language === 'am'
-                    ? 'ሰላም! እንዴት ልርዳዎት እችላለሁ?'
+                    ? 'Hello! How can I help you today?'
                     : 'Hello! How can I help you today?',
                 timestamp: new Date()
             }]);
@@ -85,7 +85,7 @@ const ChatWidget = ({ embedded = false }) => {
             setMessages(prev => [...prev, {
                 type: 'ai',
                 content: language === 'am'
-                    ? 'ይቅርታ፣ ችግር ተፈጥሯል። እባክዎ እንደገና ይሞክሩ።'
+                    ? 'Sorry, something went wrong. Please try again.'
                     : 'Sorry, something went wrong. Please try again.',
                 timestamp: new Date()
             }]);

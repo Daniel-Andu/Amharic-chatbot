@@ -6,7 +6,7 @@
       "use": "@vercel/static-build",
       "config": {
         "distDir": "build",
-        "buildCommand": "cd customer-chat && npm run build:simple"
+        "buildCommand": "cd customer-chat && CI=true GENERATE_SOURCEMAP=false npm run build"
       }
     }
   ],
