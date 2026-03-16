@@ -3,6 +3,9 @@
     "version": "1.0.0",
     "description": "Admin Dashboard for AI Assistant System",
     "private": true,
+    "engines": {
+        "node": "24.x"
+    },
     "dependencies": {
         "axios": "^1.6.2",
         "date-fns": "^2.30.0",

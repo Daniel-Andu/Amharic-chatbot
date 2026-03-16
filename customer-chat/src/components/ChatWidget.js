@@ -48,7 +48,14 @@ const ChatWidget = ({ embedded = false }) => {
     const handleSendMessage = async (e) => {
         e.preventDefault();
         const messageText = inputMessage.trim();
-        if (!messageText || !sessionId) return;
+        console.log('🔍 Debug - messageText:', messageText);
+        console.log('🔍 Debug - sessionId:', sessionId);
+        console.log('🔍 Debug - language:', language);
+
+        if (!messageText || !sessionId) {
+            console.log('❌ Debug - Early return: no message or session');
+            return;
+        }
 
         const userMessage = {
             type: 'user',
@@ -56,17 +63,21 @@ const ChatWidget = ({ embedded = false }) => {
             timestamp: new Date()
         };
 
+        console.log('📝 Adding user message:', userMessage);
         setMessages(prev => [...prev, userMessage]);
         setInputMessage('');
         setLoading(true);
 
         try {
+            console.log('🌐 Sending API request...');
             const response = await chatAPI.sendMessage({
                 sessionId,
                 message: messageText,
                 messageType: 'text',
                 language
             });
+
+            console.log('✅ API Response:', response);
 
             const aiMessage = {
                 type: 'ai',
@@ -75,6 +86,7 @@ const ChatWidget = ({ embedded = false }) => {
                 timestamp: new Date()
             };
 
+            console.log('🤖 Adding AI message:', aiMessage);
             setMessages(prev => [...prev, aiMessage]);
 
             // Auto-speak if voice enabled
@@ -82,6 +94,7 @@ const ChatWidget = ({ embedded = false }) => {
                 speakMessage(response.data.response);
             }
         } catch (error) {
+            console.error('❌ Send message error:', error);
             toast.error('Failed to send message');
             setMessages(prev => [...prev, {
                 type: 'ai',
