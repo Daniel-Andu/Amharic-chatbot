@@ -16,8 +16,10 @@ const ChatWidget = ({ embedded = false }) => {
     const recognitionRef = useRef(null);
 
     const startConversation = useCallback(async () => {
+        console.log('🚀 Starting conversation...');
         try {
             const response = await chatAPI.startConversation(language);
+            console.log('✅ Conversation started:', response);
             setSessionId(response.data.conversation.session_id);
 
             // Welcome message
@@ -29,7 +31,10 @@ const ChatWidget = ({ embedded = false }) => {
                 timestamp: new Date()
             }]);
         } catch (error) {
+            console.error('❌ Failed to start conversation:', error);
             toast.error('Failed to start conversation');
+            // Set a temporary session ID to allow testing
+            setSessionId('temp-session-' + Date.now());
         }
     }, [language]);
 
