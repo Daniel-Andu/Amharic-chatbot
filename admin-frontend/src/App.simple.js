@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import Layout from './components/Layout.simple';
+import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 
 function App() {
