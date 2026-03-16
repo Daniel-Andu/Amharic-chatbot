@@ -47,11 +47,12 @@ const ChatWidget = ({ embedded = false }) => {
 
     const handleSendMessage = async (e) => {
         e.preventDefault();
-        if (!inputMessage.trim() || !sessionId) return;
+        const messageText = inputMessage.trim();
+        if (!messageText || !sessionId) return;
 
         const userMessage = {
             type: 'user',
-            content: inputMessage,
+            content: messageText,
             timestamp: new Date()
         };
 
@@ -62,7 +63,7 @@ const ChatWidget = ({ embedded = false }) => {
         try {
             const response = await chatAPI.sendMessage({
                 sessionId,
-                message: inputMessage,
+                message: messageText,
                 messageType: 'text',
                 language
             });
