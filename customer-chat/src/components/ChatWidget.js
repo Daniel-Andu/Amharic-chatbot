@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { chatAPI } from '../services/api';
 import { Send, Mic, MicOff, Bot, User, Volume2, VolumeX } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -17,7 +17,7 @@ const ChatWidget = ({ embedded = false }) => {
 
     useEffect(() => {
         startConversation();
-    }, [language]); // Add language dependency
+    }, [language, startConversation]); // Add startConversation dependency
 
     useEffect(() => {
         scrollToBottom();
@@ -27,7 +27,7 @@ const ChatWidget = ({ embedded = false }) => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
 
-    const startConversation = async () => {
+    const startConversation = useCallback(async () => {
         try {
             const response = await chatAPI.startConversation(language);
             setSessionId(response.data.conversation.session_id);
@@ -43,7 +43,7 @@ const ChatWidget = ({ embedded = false }) => {
         } catch (error) {
             toast.error('Failed to start conversation');
         }
-    };
+    }, [language]);
 
     const handleSendMessage = async (e) => {
         e.preventDefault();
