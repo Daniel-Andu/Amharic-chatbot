@@ -8,7 +8,6 @@ import { format } from 'date-fns';
 const KnowledgeBase = () => {
     const [documents, setDocuments] = useState([]);
     const [faqs, setFaqs] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('documents');
     const [showFAQModal, setShowFAQModal] = useState(false);
     const [faqForm, setFaqForm] = useState({
@@ -107,8 +106,8 @@ const KnowledgeBase = () => {
                 <button
                     onClick={() => setActiveTab('documents')}
                     className={`px-6 py-2 rounded-lg font-medium transition-colors ${activeTab === 'documents'
-                            ? 'bg-primary-600 text-white'
-                            : 'bg-white text-gray-700 hover:bg-gray-50'
+                        ? 'bg-primary-600 text-white'
+                        : 'bg-white text-gray-700 hover:bg-gray-50'
                         }`}
                 >
                     Documents
@@ -116,8 +115,8 @@ const KnowledgeBase = () => {
                 <button
                     onClick={() => setActiveTab('faqs')}
                     className={`px-6 py-2 rounded-lg font-medium transition-colors ${activeTab === 'faqs'
-                            ? 'bg-primary-600 text-white'
-                            : 'bg-white text-gray-700 hover:bg-gray-50'
+                        ? 'bg-primary-600 text-white'
+                        : 'bg-white text-gray-700 hover:bg-gray-50'
                         }`}
                 >
                     FAQs

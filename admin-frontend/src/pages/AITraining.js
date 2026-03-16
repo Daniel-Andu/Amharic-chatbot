@@ -1,19 +1,14 @@
 import React, { useState } from 'react';
 import Layout from '../components/Layout';
-import { Brain, CheckCircle, Clock, Play } from 'lucide-react';
+import { CheckCircle, Play } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const AITraining = () => {
-    const [trainingStatus, setTrainingStatus] = useState('up-to-date');
-    const [version, setVersion] = useState('v3 (April 2024)');
-
     const handleRetrainAI = () => {
         toast.success('AI retraining initiated');
-        setTrainingStatus('training');
 
         // Simulate training completion
         setTimeout(() => {
-            setTrainingStatus('completed');
             toast.success('AI training completed successfully');
         }, 5000);
     };
@@ -84,8 +79,8 @@ const AITraining = () => {
                             <div
                                 key={v.version}
                                 className={`p-3 rounded-lg border ${v.status === 'active'
-                                        ? 'border-primary-200 bg-primary-50'
-                                        : 'border-gray-200'
+                                    ? 'border-primary-200 bg-primary-50'
+                                    : 'border-gray-200'
                                     }`}
                             >
                                 <div className="flex items-center justify-between mb-1">

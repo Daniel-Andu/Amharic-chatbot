@@ -7,7 +7,6 @@ import { format } from 'date-fns';
 
 const TopQuestions = () => {
     const [questions, setQuestions] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [language, setLanguage] = useState('all');
 
     useEffect(() => {

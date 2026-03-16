@@ -29,7 +29,7 @@ const ConversationLogs = () => {
 
     useEffect(() => {
         fetchConversations();
-    }, [page, searchQuery, filterLanguage, filterStatus]);
+    }, [fetchConversations, page, searchQuery, filterLanguage, filterStatus]);
 
     const fetchConversations = async () => {
         try {
