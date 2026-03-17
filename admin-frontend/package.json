@@ -5,7 +5,8 @@
     "private": true,
     "homepage": ".",
     "engines": {
-        "node": "24.x"
+        "node": ">=18.x",
+        "npm": ">=8.0.0"
     },
     "dependencies": {
         "axios": "^1.6.2",
@@ -18,7 +19,7 @@
     },
     "scripts": {
         "start": "react-scripts start",
-        "build": "react-scripts build",
+        "build": "GENERATE_SOURCEMAP=false react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject"
     },
