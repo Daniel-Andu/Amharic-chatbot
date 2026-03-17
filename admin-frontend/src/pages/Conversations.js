@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { conversationsAPI } from '../services/api';
+import { conversationsAPI, dashboardAPI } from '../services/api';
 import {
     MessageSquare,
     TrendingUp,
