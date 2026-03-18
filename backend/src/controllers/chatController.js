@@ -7,13 +7,26 @@ exports.startConversation = async (req, res) => {
         const sessionId = uuidv4();
         const { language = 'am' } = req.body;
 
-        const result = await pool.query(
-            `INSERT INTO conversations (session_id, user_ip, user_agent, language) 
-       VALUES ($1, $2, $3, $4) RETURNING *`,
-            [sessionId, req.ip, req.headers['user-agent'], language]
-        );
-
-        res.json({ conversation: result.rows[0] });
+        // Try database first, fallback to memory mode
+        try {
+            const result = await pool.query(
+                `INSERT INTO conversations (session_id, user_ip, user_agent, language) 
+         VALUES ($1, $2, $3, $4) RETURNING *`,
+                [sessionId, req.ip, req.headers['user-agent'], language]
+            );
+            res.json({ conversation: result.rows[0] });
+        } catch (dbError) {
+            console.log('⚠️ Database unavailable, using memory mode');
+            // Fallback: return session without database storage
+            res.json({
+                conversation: {
+                    session_id: sessionId,
+                    language,
+                    started_at: new Date(),
+                    status: 'active'
+                }
+            });
+        }
     } catch (error) {
         console.error('Start conversation error:', error);
         res.status(500).json({ error: 'Failed to start conversation' });
@@ -28,53 +41,64 @@ exports.sendMessage = async (req, res) => {
             return res.status(400).json({ error: 'Message and session ID required' });
         }
 
-        // Get conversation
-        const convResult = await pool.query(
-            'SELECT * FROM conversations WHERE session_id = $1',
-            [sessionId]
-        );
-
-        if (convResult.rows.length === 0) {
-            return res.status(404).json({ error: 'Conversation not found' });
-        }
-
-        const conversation = convResult.rows[0];
         const startTime = Date.now();
 
         // Get AI response using original service
         const aiResponse = await aiService.getResponse(message, language);
         const responseTime = Date.now() - startTime;
 
-        // Track top questions
-        await pool.query(
-            `INSERT INTO top_questions (question, question_normalized, language, ask_count, last_asked)
-       VALUES ($1, $2, $3, 1, CURRENT_TIMESTAMP)
-       ON CONFLICT (question_normalized, language) 
-       DO UPDATE SET ask_count = top_questions.ask_count + 1, last_asked = CURRENT_TIMESTAMP`,
-            [message, message.toLowerCase().trim(), language]
-        );
+        // Try database operations, fallback to memory mode
+        try {
+            // Get conversation
+            const convResult = await pool.query(
+                'SELECT * FROM conversations WHERE session_id = $1',
+                [sessionId]
+            );
 
-        // Save message
-        const messageResult = await pool.query(
-            `INSERT INTO messages (conversation_id, message_type, user_message, ai_response, 
+            if (convResult.rows.length === 0) {
+                return res.status(404).json({ error: 'Conversation not found' });
+            }
+
+            const conversation = convResult.rows[0];
+
+            // Track top questions
+            await pool.query(
+                `INSERT INTO top_questions (question, question_normalized, language, ask_count, last_asked)
+         VALUES ($1, $2, $3, 1, CURRENT_TIMESTAMP)
+         ON CONFLICT (question_normalized, language) 
+         DO UPDATE SET ask_count = top_questions.ask_count + 1, last_asked = CURRENT_TIMESTAMP`,
+                [message, message.toLowerCase().trim(), language]
+            );
+
+            // Save message
+            const messageResult = await pool.query(
+                `INSERT INTO messages (conversation_id, message_type, user_message, ai_response, 
        confidence_score, language, response_time_ms) 
        VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
-            [conversation.id, messageType, message, aiResponse.response,
-            aiResponse.confidence, language, responseTime]
-        );
+                [conversation.id, messageType, message, aiResponse.response,
+                aiResponse.confidence, language, responseTime]
+            );
 
-        // Update conversation
-        await pool.query(
-            'UPDATE conversations SET total_messages = total_messages + 1 WHERE id = $1',
-            [conversation.id]
-        );
+            // Update conversation
+            await pool.query(
+                'UPDATE conversations SET total_messages = total_messages + 1 WHERE id = $1',
+                [conversation.id]
+            );
 
-        res.json({
-            message: messageResult.rows[0],
-            response: aiResponse.response,
-            confidence: aiResponse.confidence,
-            responseTime: responseTime
-        });
+            res.json({
+                message: messageResult.rows[0],
+                response: aiResponse.response,
+                confidence: aiResponse.confidence,
+                responseTime: responseTime
+            });
+        } catch (dbError) {
+            console.log('⚠️ Database unavailable, message processed in memory mode');
+            res.json({
+                response: aiResponse.response,
+                confidence: aiResponse.confidence,
+                responseTime
+            });
+        }
     } catch (error) {
         console.error('Send message error:', error);
         res.status(500).json({ error: 'Failed to process message' });
