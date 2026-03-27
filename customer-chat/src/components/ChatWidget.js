@@ -16,22 +16,22 @@ const ChatWidget = ({ embedded = false }) => {
     const recognitionRef = useRef(null);
 
     const startConversation = useCallback(async () => {
-        console.log('🚀 Starting conversation...');
+        console.log(' Starting conversation...');
         try {
             const response = await chatAPI.startConversation(language);
-            console.log('✅ Conversation started:', response);
+            console.log(' Conversation started:', response);
             setSessionId(response.data.conversation.session_id);
 
             // Welcome message
             setMessages([{
                 type: 'ai',
                 content: language === 'am'
-                    ? 'ሰላም! እንዴት ልርዳዎት እችላለሁ?'
-                    : 'Hello! How can I help you today?',
+                    ? 'ምን ልርዳዎት!'
+                    : 'Ask any questions!',
                 timestamp: new Date()
             }]);
         } catch (error) {
-            console.error('❌ Failed to start conversation:', error);
+            console.error(' Failed to start conversation:', error);
             toast.error('Failed to start conversation');
             // Set a temporary session ID to allow testing
             setSessionId('temp-session-' + Date.now());
@@ -46,6 +46,25 @@ const ChatWidget = ({ embedded = false }) => {
         scrollToBottom();
     }, [messages]);
 
+    const formatRelativeTime = (timestamp) => {
+        const now = new Date();
+        const time = new Date(timestamp);
+        const diffInSeconds = Math.floor((now - time) / 1000);
+
+        if (diffInSeconds < 60) {
+            return language === 'am' ? 'አሁን' : 'just now';
+        } else if (diffInSeconds < 3600) {
+            const minutes = Math.floor(diffInSeconds / 60);
+            return language === 'am' ? `${minutes} ደቂቃዎች በፊት` : `${minutes} minutes ago`;
+        } else if (diffInSeconds < 86400) {
+            const hours = Math.floor(diffInSeconds / 3600);
+            return language === 'am' ? `${hours} ሰዓታት በፊት` : `${hours} hours ago`;
+        } else {
+            const days = Math.floor(diffInSeconds / 86400);
+            return language === 'am' ? `${days} ቀናት በፊት` : `${days} days ago`;
+        }
+    };
+
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
@@ -53,12 +72,12 @@ const ChatWidget = ({ embedded = false }) => {
     const handleSendMessage = async (e) => {
         e.preventDefault();
         const messageText = inputMessage.trim();
-        console.log('🔍 Debug - messageText:', messageText);
-        console.log('🔍 Debug - sessionId:', sessionId);
-        console.log('🔍 Debug - language:', language);
+        console.log(' Debug - messageText:', messageText);
+        console.log(' Debug - sessionId:', sessionId);
+        console.log(' Debug - language:', language);
 
         if (!messageText || !sessionId) {
-            console.log('❌ Debug - Early return: no message or session');
+            console.log(' Debug - Early return: no message or session');
             return;
         }
 
@@ -91,7 +110,7 @@ const ChatWidget = ({ embedded = false }) => {
                 timestamp: new Date()
             };
 
-            console.log('🤖 Adding AI message:', aiMessage);
+            console.log(' Adding AI message:', aiMessage);
             setMessages(prev => [...prev, aiMessage]);
 
             // Auto-speak if voice enabled
@@ -99,7 +118,7 @@ const ChatWidget = ({ embedded = false }) => {
                 speakMessage(response.data.response);
             }
         } catch (error) {
-            console.error('❌ Send message error:', error);
+            console.error(' Send message error:', error);
 
             let errorMessage = language === 'am'
                 ? 'ይቅርታ፣ ችግር ተፈጥሯል። እባክዎ እንደገና ይሞክሩ።'
@@ -144,11 +163,11 @@ const ChatWidget = ({ embedded = false }) => {
 
                 recognition.onstart = () => {
                     setIsRecording(true);
-                    toast.success(language === 'am' ? '🎤 እያዳመጥኩ ነው... ጮክ ብለው ይናገሩ!' : '🎤 Recording... Speak LOUDLY and CLEARLY!', {
+                    toast.success(language === 'am' ? ' እያዳመጥኩ ነው...' : ' Recording... ', {
                         duration: 15000, // Increased to 15 seconds
                         icon: '🔴'
                     });
-                    console.log('🎤 Recording started - Speak now!');
+                    console.log(' Recording started - Speak now!');
                 };
 
                 recognition.onresult = (event) => {
@@ -183,8 +202,8 @@ const ChatWidget = ({ embedded = false }) => {
 
                     if (event.error === 'no-speech') {
                         toast.error(language === 'am'
-                            ? '⚠️ ምንም ድምጽ አልተሰማም። ጮክ ብለው ይናገሩ እና እንደገና ይሞክሩ።'
-                            : '⚠️ No speech detected. Speak LOUDER and try again.', {
+                            ? ' ምንም ድምጽ አልተሰማም'
+                            : ' No speech detected.', {
                             duration: 5000
                         });
                         console.log('⚠️ No speech detected - Tips:');
@@ -194,8 +213,8 @@ const ChatWidget = ({ embedded = false }) => {
                         console.log('4. Make sure microphone is not muted');
                     } else if (event.error === 'not-allowed') {
                         toast.error(language === 'am'
-                            ? '🚫 ማይክሮፎን ፈቃድ ተከልክሏል። በአሳሽ ቅንብሮች ውስጥ ይፍቀዱ።'
-                            : '🚫 Microphone permission denied. Please allow in browser settings.', {
+                            ? ' ማይክሮፎን ፈቃድ ተከልክሏል። በአሳሽ ቅንብሮች ውስጥ ይፍቀዱ።'
+                            : ' Microphone permission denied. Please allow in browser settings.', {
                             duration: 6000
                         });
                     } else if (event.error === 'aborted') {
@@ -220,7 +239,7 @@ const ChatWidget = ({ embedded = false }) => {
 
                 recognition.onend = () => {
                     setIsRecording(false);
-                    console.log('🎤 Recording ended');
+                    console.log(' Recording ended');
                 };
 
                 // Request microphone permission first
@@ -233,8 +252,8 @@ const ChatWidget = ({ embedded = false }) => {
                     .catch((error) => {
                         console.error('❌ Microphone permission error:', error);
                         toast.error(language === 'am'
-                            ? '🚫 ማይክሮፎን መዳረሻ ተከልክሏል። እባክዎ በአሳሽ ቅንብሮች ውስጥ ይፍቀዱ።'
-                            : '🚫 Microphone access denied. Please allow in browser settings.', {
+                            ? ' ማይክሮፎን መዳረሻ ተከልክሏል። እባክዎ በአሳሽ ቅንብሮች ውስጥ ይፍቀዱ።'
+                            : ' Microphone access denied. Please allow in browser settings.', {
                             duration: 6000
                         });
                     });
@@ -250,7 +269,7 @@ const ChatWidget = ({ embedded = false }) => {
             if (recognitionRef.current) {
                 recognitionRef.current.stop();
                 setIsRecording(false);
-                console.log('🛑 Recording stopped by user');
+                console.log(' Recording stopped by user');
             }
         }
     }
@@ -311,9 +330,22 @@ const ChatWidget = ({ embedded = false }) => {
 
                     if (selectedVoice) {
                         selectedLang = 'am-ET';
-                        console.log('🎤 Using Amharic voice:', selectedVoice.name);
+                        console.log(' Using Amharic voice:', selectedVoice.name);
                     } else {
-                        console.log('⚠️ Amharic voice not found, using default');
+                        // Use default English voice for Amharic text but show notification
+                        selectedVoice = voices.find(voice =>
+                            voice.lang.includes('en-US') ||
+                            voice.lang.includes('en-GB') ||
+                            voice.lang.startsWith('en')
+                        );
+                        selectedLang = 'en-US';
+                        console.log('⚠️ Amharic voice not found, using English voice for Amharic text');
+
+                        // Show toast notification about Amharic voice limitation
+                        toast.info('Amharic voice not available - using English voice pronunciation', {
+                            duration: 3000,
+                            icon: '🔊'
+                        });
                     }
                 } else {
                     // Use English voice
@@ -373,30 +405,34 @@ const ChatWidget = ({ embedded = false }) => {
     };
 
     return (
-        <div className={`flex flex-col ${embedded ? 'h-full' : 'h-screen'} bg-gray-50`}>
+        <div className={`flex flex-col ${embedded ? 'h-full' : 'h-screen'} bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100`}>
             {/* Header */}
-            <div className="bg-primary-600 text-white p-4 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-                        <Bot className="w-6 h-6 text-primary-600" />
+            <div className="bg-gradient-to-r from-blue-600 via-teal-600 to-indigo-700 text-white p-4 shadow-2xl border-b border-white/20">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg border-2 border-white/30">
+                            <Bot className="w-7 h-7 text-white" />
+                        </div>
+                        <div>
+                            <h3 className="font-bold text-lg bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
+                                AI Assistant
+                            </h3>
+                            <p className="text-xs text-blue-100 font-medium">
+                                {language === 'am' ? 'የአማርኛ ድጋፍ' : 'Amharic & English Support'}
+                            </p>
+                        </div>
                     </div>
-                    <div>
-                        <h3 className="font-semibold">AI Assistant</h3>
-                        <p className="text-xs text-primary-100">
-                            {language === 'am' ? 'የአማርኛ ድጋፍ' : 'Amharic Support'}
-                        </p>
-                    </div>
-                </div>
 
-                <div className="flex items-center gap-2">
-                    <select
-                        value={language}
-                        onChange={(e) => setLanguage(e.target.value)}
-                        className="bg-primary-700 text-white px-3 py-1 rounded text-sm border border-primary-500"
-                    >
-                        <option value="am">አማርኛ</option>
-                        <option value="en">English</option>
-                    </select>
+                    <div className="flex items-center gap-2">
+                        <select
+                            value={language}
+                            onChange={(e) => setLanguage(e.target.value)}
+                            className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg text-sm border border-white/30 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all"
+                        >
+                            <option value="am" className="text-gray-800">አማርኛ</option>
+                            <option value="en" className="text-gray-800">English</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
@@ -408,45 +444,43 @@ const ChatWidget = ({ embedded = false }) => {
                         className={`flex gap-3 ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
                         {msg.type === 'ai' && (
-                            <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                <Bot className="w-5 h-5 text-primary-600" />
+                            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-teal-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg">
+                                <Bot className="w-6 h-6 text-white" />
                             </div>
                         )}
 
                         <div
-                            className={`max-w-[70%] rounded-2xl px-4 py-3 ${msg.type === 'user'
-                                ? 'bg-primary-600 text-white'
-                                : 'bg-white text-gray-800 shadow-sm'
+                            className={`max-w-[75%] rounded-2xl px-5 py-4 shadow-lg backdrop-blur-sm transition-all hover:shadow-xl ${msg.type === 'user'
+                                ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white border border-blue-400/30'
+                                : 'bg-white/90 text-gray-800 border border-gray-200/50'
                                 }`}
                         >
-                            <div className="flex items-start justify-between gap-2">
-                                <p className={`text-sm flex-1 ${language === 'am' ? 'amharic-text' : ''}`}>
+                            <div className="flex items-start justify-between gap-3">
+                                <p className={`text-sm flex-1 leading-relaxed ${language === 'am' ? 'amharic-text' : ''}`}>
                                     {msg.content}
                                 </p>
                                 {msg.type === 'ai' && (
                                     <button
                                         onClick={() => speakMessage(msg.content)}
-                                        className="flex-shrink-0 p-1 hover:bg-gray-100 rounded transition-colors"
-                                        title={language === 'am' ? 'ድምጽ ያድምጡ' : 'Listen'}
+                                        className="flex-shrink-0 p-2 hover:bg-blue-50 rounded-lg transition-all group"
+                                        title={language === 'am' ? 'ድምጽ ያድምጡ' : 'Listen to response'}
                                     >
                                         {isSpeaking ? (
-                                            <VolumeX className="w-4 h-4 text-primary-600" />
+                                            <VolumeX className="w-4 h-4 text-blue-600 group-hover:text-blue-700" />
                                         ) : (
-                                            <Volume2 className="w-4 h-4 text-gray-500" />
+                                            <Volume2 className="w-4 h-4 text-gray-500 group-hover:text-blue-600" />
                                         )}
                                     </button>
                                 )}
                             </div>
-                            {msg.confidence && (
-                                <p className="text-xs text-gray-500 mt-1">
-                                    Confidence: {(msg.confidence * 100).toFixed(0)}%
-                                </p>
-                            )}
+                            <div className="mt-2 text-xs text-gray-500">
+                                {formatRelativeTime(msg.timestamp)}
+                            </div>
                         </div>
 
                         {msg.type === 'user' && (
-                            <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
-                                <User className="w-5 h-5 text-gray-600" />
+                            <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-teal-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg">
+                                <User className="w-6 h-6 text-white" />
                             </div>
                         )}
                     </div>
@@ -454,14 +488,14 @@ const ChatWidget = ({ embedded = false }) => {
 
                 {loading && (
                     <div className="flex gap-3">
-                        <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
-                            <Bot className="w-5 h-5 text-primary-600" />
+                        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-teal-600 rounded-full flex items-center justify-center shadow-lg">
+                            <Bot className="w-6 h-6 text-white" />
                         </div>
-                        <div className="bg-white rounded-2xl px-4 py-3 shadow-sm">
-                            <div className="flex gap-1">
-                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                        <div className="bg-white/90 backdrop-blur-sm rounded-2xl px-5 py-4 shadow-lg border border-gray-200/50">
+                            <div className="flex gap-2">
+                                <div className="w-3 h-3 bg-gradient-to-r from-blue-400 to-teal-400 rounded-full animate-bounce"></div>
+                                <div className="w-3 h-3 bg-gradient-to-r from-teal-400 to-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                                <div className="w-3 h-3 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                             </div>
                         </div>
                     </div>
@@ -471,57 +505,59 @@ const ChatWidget = ({ embedded = false }) => {
             </div>
 
             {/* Input */}
-            <div className="bg-white border-t border-gray-200 p-4">
-                {/* Voice toggle and info */}
-                <div className="flex items-center justify-between mb-2">
-                    <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+            <div className="bg-white/80 backdrop-blur-md border-t border-gray-200/50 p-4 shadow-2xl">
+                {/* Voice Status */}
+                <div className="flex items-center justify-between mb-3">
+                    <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:text-gray-800 transition-colors">
                         <input
                             type="checkbox"
                             checked={voiceEnabled}
                             onChange={(e) => setVoiceEnabled(e.target.checked)}
-                            className="rounded"
+                            className="rounded w-4 h-4 text-blue-600 focus:ring-blue-500"
                         />
-                        <span>{language === 'am' ? 'ድምጽ አንቃ (ራስ-ሰር ይናገራል)' : 'Enable Voice (Auto-speak)'}</span>
+                        <span className="font-medium">
+                            {language === 'am' ? '🔊 ድምጽ አንቃ (ራስ-ሰር)' : '🔊 Enable Voice (Auto-speak)'}
+                        </span>
                     </label>
                     {isRecording && (
-                        <span className="text-sm text-red-500 animate-pulse flex items-center gap-1">
-                            <span className="w-2 h-2 bg-red-500 rounded-full"></span>
-                            {language === 'am' ? 'እያዳመጥኩ...' : 'Listening...'}
+                        <span className="text-sm text-red-500 animate-pulse flex items-center gap-2 font-medium">
+                            <span className="w-3 h-3 bg-red-500 rounded-full animate-ping"></span>
+                            {language === 'am' ? 'እያዳመጥኩ...' : '🎤 Listening...'}
                         </span>
                     )}
                 </div>
 
                 {/* Voice recording tip */}
                 {!isRecording && (
-                    <div className="mb-2 text-xs text-gray-500 flex items-center gap-1">
-                        <Mic className="w-3 h-3" />
-                        <span>
+                    <div className="mb-3 text-xs text-gray-500 flex items-center gap-2 bg-blue-50 p-2 rounded-lg border border-blue-200">
+                        <Mic className="w-4 h-4 text-blue-500" />
+                        <span className="font-medium">
                             {language === 'am'
                                 ? 'የማይክሮፎን ቁልፍን ጠቅ በማድረግ የድምጽ መልእክት ይላኩ'
-                                : 'Click microphone button to send voice message'}
+                                : '🎤 Click microphone button to send voice message'}
                         </span>
                     </div>
                 )}
 
-                <form onSubmit={handleSendMessage} className="flex gap-2">
+                <form onSubmit={handleSendMessage} className="flex gap-3">
                     <button
                         type="button"
                         onClick={handleVoiceInput}
-                        className={`p-3 rounded-lg transition-all ${isRecording
-                            ? 'bg-red-500 text-white animate-pulse shadow-lg'
-                            : 'bg-primary-100 text-primary-600 hover:bg-primary-200'
+                        className={`p-4 rounded-xl transition-all transform hover:scale-105 ${isRecording
+                            ? 'bg-gradient-to-r from-red-500 to-orange-600 text-white animate-pulse shadow-lg'
+                            : 'bg-gradient-to-r from-blue-500 to-teal-600 text-white hover:from-blue-600 hover:to-teal-700 shadow-lg'
                             }`}
                         title={language === 'am' ? 'የድምጽ መልእክት ይቅዱ' : 'Record voice message'}
                     >
-                        {isRecording ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+                        {isRecording ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
                     </button>
 
                     <input
                         type="text"
                         value={inputMessage}
                         onChange={(e) => setInputMessage(e.target.value)}
-                        placeholder={language === 'am' ? 'መልእክት ይጻፉ...' : 'Type a message...'}
-                        className={`flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none ${language === 'am' ? 'amharic-text' : ''
+                        placeholder={language === 'am' ? '💬 መልእክት ይጻፉ...' : '💬 Type a message...'}
+                        className={`flex-1 px-5 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white/90 backdrop-blur-sm shadow-inner transition-all ${language === 'am' ? 'amharic-text' : ''
                             }`}
                         disabled={loading || isRecording}
                     />
@@ -529,13 +565,13 @@ const ChatWidget = ({ embedded = false }) => {
                     <button
                         type="submit"
                         disabled={loading || !inputMessage.trim() || isRecording}
-                        className="bg-primary-600 text-white p-3 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
                     >
-                        <Send className="w-5 h-5" />
+                        <Send className="w-6 h-6" />
                     </button>
                 </form>
             </div>
-        </div>
+        </div >
     );
 };
 

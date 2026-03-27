@@ -34,8 +34,10 @@ router.post('/voice/message', audioUpload.single('audio'), voiceController.voice
 // Dashboard routes (admin only)
 router.get('/dashboard/stats', authMiddleware, adminOnly, dashboardController.getStats);
 router.get('/dashboard/top-questions', authMiddleware, adminOnly, dashboardController.getTopQuestions);
-router.get('/dashboard/conversations', authMiddleware, adminOnly, dashboardController.getConversationLogs);
+router.get('/dashboard/conversations', authMiddleware, adminOnly, dashboardController.getConversations);
 router.get('/dashboard/conversations/:id', authMiddleware, adminOnly, dashboardController.getConversationDetails);
+router.get('/dashboard/users', authMiddleware, adminOnly, dashboardController.getUsers);
+router.get('/dashboard/notifications', authMiddleware, adminOnly, dashboardController.getNotifications);
 
 // Knowledge base routes (admin only)
 router.post('/knowledge/documents', authMiddleware, adminOnly, knowledgeController.uploadDocument);

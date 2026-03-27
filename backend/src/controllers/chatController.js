@@ -1,5 +1,6 @@
 const pool = require('../config/database');
-const aiService = require('../services/aiService'); // Use original AI service
+const aiService = require('../services/aiService.fallback'); // Use fallback AI service
+const memoryStore = require('../services/memoryStore'); // Use memory store
 const { v4: uuidv4 } = require('uuid');
 
 exports.startConversation = async (req, res) => {
@@ -10,14 +11,23 @@ exports.startConversation = async (req, res) => {
         // Try database first, fallback to memory mode
         try {
             const result = await pool.query(
-                `INSERT INTO conversations (session_id, user_ip, user_agent, language) 
-         VALUES ($1, $2, $3, $4) RETURNING *`,
-                [sessionId, req.ip, req.headers['user-agent'], language]
+                `INSERT INTO conversations (session_id, user_ip, user_agent, language, user_name, email)
+         VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+                [sessionId, req.ip, req.headers['user-agent'], language, 'Guest User', 'guest@example.com']
             );
             res.json({ conversation: result.rows[0] });
         } catch (dbError) {
             console.log('⚠️ Database unavailable, using memory mode');
-            // Fallback: return session without database storage
+            // Fallback: save to memory store
+            memoryStore.saveConversation(sessionId, {
+                session_id: sessionId,
+                language,
+                started_at: new Date(),
+                status: 'active',
+                user_ip: req.ip,
+                user_agent: req.headers['user-agent']
+            });
+
             res.json({
                 conversation: {
                     session_id: sessionId,
@@ -92,11 +102,33 @@ exports.sendMessage = async (req, res) => {
                 responseTime: responseTime
             });
         } catch (dbError) {
-            console.log('⚠️ Database unavailable, message processed in memory mode');
+            console.log('⚠️ Database unavailable, using memory mode');
+
+            // Use memory store
+            const conversation = memoryStore.getConversation(sessionId);
+            if (!conversation) {
+                return res.status(404).json({ error: 'Conversation not found' });
+            }
+
+            // Track top questions in memory
+            memoryStore.trackQuestion(message, language);
+
+            // Save message to memory
+            const savedMessage = memoryStore.saveMessage({
+                conversation_id: sessionId,
+                message_type: messageType,
+                user_message: message,
+                ai_response: aiResponse.response,
+                confidence_score: aiResponse.confidence,
+                language,
+                response_time_ms: responseTime
+            });
+
             res.json({
                 response: aiResponse.response,
                 confidence: aiResponse.confidence,
-                responseTime
+                sessionId,
+                timestamp: new Date()
             });
         }
     } catch (error) {

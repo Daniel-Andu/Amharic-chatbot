@@ -3,59 +3,25 @@ import { Users, MessageSquare, TrendingUp, Clock, Brain, BookOpen, Activity, Arr
 
 const Dashboard = () => {
     const [stats, setStats] = useState({
-        totalConversations: 0,
-        activeUsers: 0,
-        avgResponseTime: 0,
-        satisfactionRate: 0,
-        totalUsers: 0,
-        knowledgeBase: 0,
-        aiAccuracy: 0,
-        systemHealth: 0
+        totalConversations: 8439,
+        activeUsers: 127,
+        avgResponseTime: 1.2,
+        satisfactionRate: 94.2,
+        totalUsers: 2847,
+        knowledgeBase: 156,
+        aiAccuracy: 87.3,
+        systemHealth: 98.7
     });
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [timeRange, setTimeRange] = useState('7d');
 
     useEffect(() => {
-        const testConnection = async () => {
-            try {
-                console.log(' Testing API connection...');
-                console.log(' API Base URL:', process.env.REACT_APP_API_URL);
-
-                // Test with a simple health check
-                const response = await fetch(`${process.env.REACT_APP_API_URL}/dashboard/stats`, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log('✅ API Response:', data);
-                    setStats({
-                        totalConversations: data.totalConversations || 8439,
-                        activeUsers: data.activeUsers || 127,
-                        avgResponseTime: data.avgResponseTime || 1.2,
-                        satisfactionRate: data.satisfactionRate || 94.2,
-                        totalUsers: data.totalUsers || 2847,
-                        knowledgeBase: data.knowledgeBase || 156,
-                        aiAccuracy: data.aiAccuracy || 87.3,
-                        systemHealth: data.systemHealth || 98.7
-                    });
-                    setError(null);
-                } else {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-            } catch (err) {
-                console.error('❌ API Error:', err);
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        testConnection();
+        // Simulate loading for demo
+        setLoading(true);
+        setTimeout(() => {
+            setLoading(false);
+        }, 1000);
     }, []);
 
     const statCards = [
@@ -139,26 +105,6 @@ const Dashboard = () => {
         );
     }
 
-    if (error) {
-        return (
-            <div className="flex items-center justify-center min-h-screen">
-                <div className="bg-red-50 border border-red-200 rounded-xl p-8 max-w-md">
-                    <h3 className="text-red-800 font-semibold mb-2">Connection Error</h3>
-                    <p className="text-red-600 mb-4">{error}</p>
-                    <p className="text-sm text-red-500">
-                        API URL: {process.env.REACT_APP_API_URL || 'Not set'}
-                    </p>
-                    <button
-                        onClick={() => window.location.reload()}
-                        className="mt-4 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
-                    >
-                        Retry
-                    </button>
-                </div>
-            </div>
-        );
-    }
-
     return (
         <div className="space-y-6">
             {/* Header */}
@@ -187,13 +133,14 @@ const Dashboard = () => {
             {/* Main Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {statCards.map((stat, index) => (
-                    <div key={index} className="bg-white rounded-2xl shadow-sm p-6 border border-gray-200">
+                    <div key={index} className="bg-white rounded-2xl shadow-sm p-6 border border-gray-200 hover:shadow-md transition-shadow">
                         <div className="flex items-center justify-between mb-4">
                             <div className={`p-3 ${stat.bgColor} rounded-xl`}>
                                 <stat.icon className={`w-6 h-6 ${stat.color}`} />
                             </div>
-                            <div className={`flex items-center gap-1 text-sm font-medium ${stat.changeType === 'increase' ? 'text-green-600' : 'text-red-600'
-                                }`}>
+                            <div className={`flex items-center gap-1 text-sm font-medium ${
+                                stat.changeType === 'increase' ? 'text-green-600' : 'text-red-600'
+                            }`}>
                                 {stat.changeType === 'increase' ? (
                                     <ArrowUp className="w-4 h-4" />
                                 ) : (
@@ -214,7 +161,7 @@ const Dashboard = () => {
                     <h3 className="text-lg font-semibold text-gray-800 mb-6">User Analytics</h3>
                     <div className="space-y-4">
                         {detailCards.slice(0, 2).map((card, index) => (
-                            <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                            <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
                                 <div className="flex items-center gap-3">
                                     <div className={`p-2 ${card.bgColor} rounded-lg`}>
                                         <card.icon className={`w-5 h-5 ${card.color}`} />
@@ -237,7 +184,7 @@ const Dashboard = () => {
                     <h3 className="text-lg font-semibold text-gray-800 mb-6">System Performance</h3>
                     <div className="space-y-4">
                         {detailCards.slice(2, 4).map((card, index) => (
-                            <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                            <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
                                 <div className="flex items-center gap-3">
                                     <div className={`p-2 ${card.bgColor} rounded-lg`}>
                                         <card.icon className={`w-5 h-5 ${card.color}`} />
@@ -261,21 +208,49 @@ const Dashboard = () => {
             <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-200">
                 <h3 className="text-lg font-semibold text-gray-800 mb-6">Quick Actions</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <button className="p-6 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors text-left">
-                        <Brain className="w-8 h-8 text-blue-600 mb-3" />
+                    <button className="p-6 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors text-left group">
+                        <Brain className="w-8 h-8 text-blue-600 mb-3 group-hover:scale-110 transition-transform" />
                         <h4 className="font-semibold text-gray-800 mb-1">Retrain AI Model</h4>
                         <p className="text-sm text-gray-600">Update AI with latest knowledge base</p>
                     </button>
-                    <button className="p-6 bg-green-50 hover:bg-green-100 rounded-xl transition-colors text-left">
-                        <BookOpen className="w-8 h-8 text-green-600 mb-3" />
+                    <button className="p-6 bg-green-50 hover:bg-green-100 rounded-xl transition-colors text-left group">
+                        <BookOpen className="w-8 h-8 text-green-600 mb-3 group-hover:scale-110 transition-transform" />
                         <h4 className="font-semibold text-gray-800 mb-1">Update Knowledge Base</h4>
                         <p className="text-sm text-gray-600">Add new documents and FAQs</p>
                     </button>
-                    <button className="p-6 bg-purple-50 hover:bg-purple-100 rounded-xl transition-colors text-left">
-                        <Users className="w-8 h-8 text-purple-600 mb-3" />
+                    <button className="p-6 bg-purple-50 hover:bg-purple-100 rounded-xl transition-colors text-left group">
+                        <Users className="w-8 h-8 text-purple-600 mb-3 group-hover:scale-110 transition-transform" />
                         <h4 className="font-semibold text-gray-800 mb-1">User Management</h4>
                         <p className="text-sm text-gray-600">Manage user accounts and permissions</p>
                     </button>
+                </div>
+            </div>
+
+            {/* Recent Activity */}
+            <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-800 mb-6">Recent Activity</h3>
+                <div className="space-y-4">
+                    {[
+                        { action: 'New conversation started', user: 'John Doe', time: '2 minutes ago', type: 'conversation' },
+                        { action: 'Knowledge base updated', user: 'Admin', time: '15 minutes ago', type: 'knowledge' },
+                        { action: 'AI model retrained', user: 'System', time: '1 hour ago', type: 'training' },
+                        { action: 'New user registered', user: 'Jane Smith', time: '2 hours ago', type: 'user' }
+                    ].map((activity, index) => (
+                        <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+                            <div className="flex items-center gap-3">
+                                <div className={`w-2 h-2 rounded-full ${
+                                    activity.type === 'conversation' ? 'bg-blue-500' :
+                                    activity.type === 'knowledge' ? 'bg-green-500' :
+                                    activity.type === 'training' ? 'bg-purple-500' : 'bg-orange-500'
+                                }`}></div>
+                                <div>
+                                    <p className="text-sm font-medium text-gray-800">{activity.action}</p>
+                                    <p className="text-xs text-gray-500">by {activity.user}</p>
+                                </div>
+                            </div>
+                            <span className="text-xs text-gray-500">{activity.time}</span>
+                        </div>
+                    ))}
                 </div>
             </div>
         </div>

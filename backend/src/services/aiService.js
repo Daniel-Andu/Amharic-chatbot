@@ -77,7 +77,10 @@ class AIService {
             return context;
         } catch (error) {
             console.error('Get knowledge context error:', error);
-            return '';
+            // Return default context when database is not available
+            return language === 'am'
+                ? 'የኩባንያ መረጃ፡ እኛ የተለያዩ አገልጋጎችን እናቀልጣለን።'
+                : 'Company Information: We provide various services and support.';
         }
     }
 
