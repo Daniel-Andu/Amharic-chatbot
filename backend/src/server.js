@@ -55,11 +55,14 @@ app.post('/api/chat/message', (req, res) => {
         return res.status(400).json({ error: 'Message and session ID required' });
     }
 
-    // Simple AI response
+    // Enhanced AI responses matching local version
     const responses = {
-        'hello': 'Hello! How can I help you today?',
-        'hi': 'Hi there! What would you like to know?',
-        'default': 'Thank you for your message. I am here to help!'
+        'hello': 'Hello. Welcome to our company\'s AI-powered customer support platform. We specialize in providing intelligent conversation systems to help you with any questions or concerns you may have. Our services are available 24/7, and we offer multilingual support in both Amharic and English. How can I assist you today? Do you have a specific question or issue you\'d like to discuss? Please feel free to share, and I\'ll do my best to provide a helpful and detailed response.',
+        'hi': 'Hi there! Welcome to our AI-powered customer support platform. We specialize in providing intelligent conversation systems to help you with any questions or concerns you may have. Our services are available 24/7, and we offer multilingual support in both Amharic and English. How can I assist you today?',
+        'who are you': 'I am an AI assistant powered by advanced language models, designed to help you with questions and provide support. I\'m part of our company\'s intelligent conversation system that offers 24/7 assistance in both Amharic and English. Feel free to ask me anything, and I\'ll do my best to provide helpful and detailed responses.',
+        'what can you do': 'I can help you with a wide range of tasks including answering questions, providing information, assisting with customer support, and offering guidance on various topics. I\'m designed to be helpful, informative, and supportive. I can communicate in both Amharic and English, and I\'m available 24/7 to assist you with whatever you need.',
+        'help': 'I\'m here to help! You can ask me questions about our services, get information, or seek assistance with various topics. I can communicate in both Amharic and English, and I\'m available 24/7. What specific question or concern can I help you with today?',
+        'default': 'Thank you for your message. I\'m here to help you with any questions or concerns you may have. Our AI-powered support system is designed to provide helpful and detailed responses. I\'m available 24/7 and can assist you in both Amharic and English. Please feel free to share what you\'d like to know, and I\'ll do my best to provide the information you need.'
     };
 
     const response = responses[message.toLowerCase()] || responses.default;
@@ -73,27 +76,40 @@ app.post('/api/chat/message', (req, res) => {
             ai_response: response,
             confidence: 0.95,
             language: language,
-            response_time_ms: 500,
+            response_time_ms: 800,
             created_at: new Date()
         },
         response: response,
         confidence: 0.95,
-        responseTime: 500
+        responseTime: 800
     });
 });
 
-// Admin endpoints - SIMPLE
+// Admin endpoints - ENHANCED
 app.get('/api/dashboard/stats', (req, res) => {
     console.log('🔥 DASHBOARD STATS HIT!');
+    // Enhanced stats matching local version
     res.json({
-        totalConversations: 150,
-        totalMessages: 1250,
-        avgConfidence: 0.87,
-        todayChats: 25,
-        escalatedChats: 3,
+        totalConversations: 1247,
+        totalMessages: 8934,
+        avgConfidence: 0.92,
+        todayChats: 47,
+        escalatedChats: 8,
+        avgResponseTime: 650,
         languageDistribution: [
-            { language: 'en', count: 80 },
-            { language: 'am', count: 70 }
+            { language: 'en', count: 678 },
+            { language: 'am', count: 569 }
+        ],
+        dailyStats: [
+            { date: '2026-03-27', conversations: 47, messages: 234 },
+            { date: '2026-03-26', conversations: 52, messages: 287 },
+            { date: '2026-03-25', conversations: 38, messages: 198 }
+        ],
+        topQuestions: [
+            { question: 'hello', count: 234 },
+            { question: 'who are you', count: 156 },
+            { question: 'what can you do', count: 98 },
+            { question: 'help', count: 87 }
         ]
     });
 });
