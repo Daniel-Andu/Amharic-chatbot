@@ -45,11 +45,16 @@ app.use('/api/', limiter);
 // CORS configuration
 const corsOptions = {
     origin: function (origin, callback) {
+        // Allow any origin if CORS_ORIGIN is '*', otherwise check specific origins
+        if (process.env.CORS_ORIGIN === '*') {
+            return callback(null, true);
+        }
+
         const allowedOrigins = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : ['http://localhost:3000'];
         if (!origin || allowedOrigins.includes(origin) || process.env.NODE_ENV === 'development') {
-            callback(null, true);
+            return callback(null, true);
         } else {
-            callback(new Error('Not allowed by CORS'));
+            return callback(new Error('Not allowed by CORS'));
         }
     },
     credentials: true
@@ -92,14 +97,14 @@ app.use('*', (req, res) => {
 // Global error handler
 app.use((err, req, res, next) => {
     console.error('❌ Global error:', err);
-    
+
     if (err.message === 'Not allowed by CORS') {
         return res.status(403).json({
             error: 'CORS policy violation',
             message: 'This origin is not allowed'
         });
     }
-    
+
     res.status(err.status || 500).json({
         error: process.env.NODE_ENV === 'production' ? 'Internal server error' : err.message,
         ...(process.env.NODE_ENV !== 'production' && { stack: err.stack })
@@ -121,14 +126,14 @@ process.on('SIGINT', () => {
 const startServer = async () => {
     try {
         const { runMigration } = require('./database/migrate');
-        
+
         // Run database migration if enabled
         if (process.env.RUN_MIGRATION === 'true') {
             console.log('🔄 Running database migration...');
             await runMigration();
             console.log('✅ Database migration completed');
         }
-        
+
         const PORT = process.env.PORT || 5000;
         app.listen(PORT, () => {
             console.log(`🚀 Server running on port ${PORT}`);
