@@ -57,10 +57,12 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 // Request logging
 app.use((req, res, next) => {
     console.log(`📝 ${req.method} ${req.path} - ${new Date().toISOString()}`);
+    console.log('🔍 Headers:', req.headers);
+    console.log('🔍 Body:', req.body);
     next();
 });
 
-// Routes
+// API routes
 app.use('/api', routes);
 
 // Health check endpoint
@@ -70,7 +72,7 @@ app.get('/health', (req, res) => {
         timestamp: new Date().toISOString(),
         uptime: process.uptime(),
         environment: process.env.NODE_ENV,
-        version: '1.0.0'
+        version: '984a2e8'
     });
 });
 
