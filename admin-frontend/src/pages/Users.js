@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Users, Search, Filter, Download, Eye, Mail, MapPin, Calendar, Globe, Smartphone, Monitor, Star, TrendingUp, Activity, UserPlus, UserMinus, Trash2, Edit, Shield, Clock } from 'lucide-react';
+import { Users, Search, Filter, Download, Eye, Mail, MapPin, Calendar, Globe, Smartphone, Monitor, Star, TrendingUp, Activity, UserPlus, UserMinus, Trash2, Edit, Shield, Clock, MessageSquare, AlertCircle } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { dashboardAPI } from '../services/api';
 
@@ -101,6 +101,17 @@ const UsersManagement = () => {
                 ★
             </span>
         ));
+    };
+
+    const getSubscriptionBadge = (subscription) => {
+        const subscriptionConfig = {
+            free: { bg: 'bg-gray-100', text: 'text-gray-800', label: 'Free' },
+            premium: { bg: 'bg-purple-100', text: 'text-purple-800', label: 'Premium' },
+            enterprise: { bg: 'bg-blue-100', text: 'text-blue-800', label: 'Enterprise' }
+        };
+
+        const config = subscriptionConfig[subscription] || subscriptionConfig.free;
+        return `${config.bg} ${config.text}`;
     };
 
     const getLocationInfo = (language) => {
