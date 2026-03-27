@@ -18,7 +18,7 @@
     },
     "scripts": {
         "start": "react-scripts start",
-        "build": "set CI=true&& set ESLINT_NO_DEV_ERRORS=true&& react-scripts build",
+        "build": "react-scripts build",
         "build:simple": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject"
