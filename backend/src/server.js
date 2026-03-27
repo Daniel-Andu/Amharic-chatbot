@@ -42,24 +42,13 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
-// CORS configuration
-const corsOptions = {
-    origin: function (origin, callback) {
-        // Allow any origin if CORS_ORIGIN is '*', otherwise check specific origins
-        if (process.env.CORS_ORIGIN === '*') {
-            return callback(null, true);
-        }
-
-        const allowedOrigins = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : ['http://localhost:3000'];
-        if (!origin || allowedOrigins.includes(origin) || process.env.NODE_ENV === 'development') {
-            return callback(null, true);
-        } else {
-            return callback(new Error('Not allowed by CORS'));
-        }
-    },
-    credentials: true
-};
-app.use(cors(corsOptions));
+// CORS configuration - Allow all origins for development
+app.use(cors({
+    origin: true,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // Body parsing middleware
 app.use(express.json({ limit: '50mb' }));
