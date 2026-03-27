@@ -2,26 +2,82 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Layout from './components/Layout.enterprise';
-import Dashboard from './components/Dashboard.enterprise';
+import Dashboard from './pages/Dashboard';
 import Login from './pages/Login.enterprise';
+import Analytics from './pages/Analytics';
+import AITraining from './pages/AITraining';
+import KnowledgeBase from './pages/KnowledgeBase';
+import Conversations from './pages/Conversations';
+import Users from './pages/Users';
+import Settings from './pages/Settings';
 
 function App() {
     const isAuthenticated = () => {
-        return localStorage.getItem('token') !== null;
+        const token = localStorage.getItem('token');
+        const user = localStorage.getItem('user');
+        return token !== null && user !== null;
     };
 
     const ProtectedRoute = ({ children }) => {
-        return isAuthenticated() ? children : <Navigate to="/login" />;
+        const [isChecking, setIsChecking] = React.useState(true);
+        const [isAuth, setIsAuth] = React.useState(false);
+
+        React.useEffect(() => {
+            const checkAuth = () => {
+                const token = localStorage.getItem('token');
+                const user = localStorage.getItem('user');
+                const isValid = token !== null && user !== null;
+
+                // Check if it's a demo token or real token
+                const isDemoToken = token && token.startsWith('demo-token-');
+
+                console.log('🔍 Checking authentication:');
+                console.log('  Token exists:', !!token);
+                console.log('  User exists:', !!user);
+                console.log('  Is demo token:', isDemoToken);
+                console.log('  Is valid:', isValid);
+
+                setIsAuth(isValid);
+                setIsChecking(false);
+            };
+
+            checkAuth();
+
+            // Listen for storage changes
+            const handleStorageChange = () => {
+                checkAuth();
+            };
+
+            window.addEventListener('storage', handleStorageChange);
+            return () => window.removeEventListener('storage', handleStorageChange);
+        }, []);
+
+        if (isChecking) {
+            return (
+                <div className="min-h-screen bg-gradient-to-br from-blue-600 via-teal-600 to-indigo-700 flex items-center justify-center">
+                    <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl p-8 border border-white/20">
+                        <div className="flex justify-center mb-4">
+                            <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-teal-600 rounded-full flex items-center justify-center shadow-lg">
+                                <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+                            </div>
+                        </div>
+                        <p className="text-center text-gray-700 font-medium">Loading...</p>
+                    </div>
+                </div>
+            );
+        }
+
+        return isAuth ? children : <Navigate to="/login" />;
     };
 
     return (
         <Router>
-            <div className="App">
+            <div className="App min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
                 <Toaster position="top-right" />
                 <Routes>
                     {/* Login Route */}
                     <Route path="/login" element={<Login />} />
-                    
+
                     {/* Protected Admin Routes */}
                     <Route
                         path="/"
@@ -48,10 +104,7 @@ function App() {
                         element={
                             <ProtectedRoute>
                                 <Layout title="Conversation Logs">
-                                    <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-200">
-                                        <h3 className="text-lg font-semibold text-gray-800 mb-4">Conversation Logs</h3>
-                                        <p className="text-gray-600">View and analyze all conversation history.</p>
-                                    </div>
+                                    <Conversations />
                                 </Layout>
                             </ProtectedRoute>
                         }
@@ -61,10 +114,7 @@ function App() {
                         element={
                             <ProtectedRoute>
                                 <Layout title="Knowledge Base">
-                                    <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-200">
-                                        <h3 className="text-lg font-semibold text-gray-800 mb-4">Knowledge Base</h3>
-                                        <p className="text-gray-600">Manage documents and FAQs for AI training.</p>
-                                    </div>
+                                    <KnowledgeBase />
                                 </Layout>
                             </ProtectedRoute>
                         }
@@ -74,10 +124,7 @@ function App() {
                         element={
                             <ProtectedRoute>
                                 <Layout title="AI Training">
-                                    <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-200">
-                                        <h3 className="text-lg font-semibold text-gray-800 mb-4">AI Training</h3>
-                                        <p className="text-gray-600">Retrain and improve AI model performance.</p>
-                                    </div>
+                                    <AITraining />
                                 </Layout>
                             </ProtectedRoute>
                         }
@@ -87,10 +134,17 @@ function App() {
                         element={
                             <ProtectedRoute>
                                 <Layout title="Analytics">
-                                    <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-200">
-                                        <h3 className="text-lg font-semibold text-gray-800 mb-4">Analytics</h3>
-                                        <p className="text-gray-600">Detailed analytics and insights.</p>
-                                    </div>
+                                    <Analytics />
+                                </Layout>
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/users"
+                        element={
+                            <ProtectedRoute>
+                                <Layout title="User Management">
+                                    <Users />
                                 </Layout>
                             </ProtectedRoute>
                         }
@@ -100,10 +154,7 @@ function App() {
                         element={
                             <ProtectedRoute>
                                 <Layout title="Settings">
-                                    <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-200">
-                                        <h3 className="text-lg font-semibold text-gray-800 mb-4">Settings</h3>
-                                        <p className="text-gray-600">Configure system settings and preferences.</p>
-                                    </div>
+                                    <Settings />
                                 </Layout>
                             </ProtectedRoute>
                         }

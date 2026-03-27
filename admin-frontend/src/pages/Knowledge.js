@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import Layout from '../components/Layout';
+import Layout from '../components/Layout.enterprise';
 import { knowledgeAPI } from '../services/api';
-import { 
-    BookOpen, 
-    Upload, 
-    Search, 
-    Plus, 
-    Edit, 
-    Trash2, 
-    Download, 
+import {
+    BookOpen,
+    Upload,
+    Search,
+    Plus,
+    Edit,
+    Trash2,
+    Download,
     FileText,
     HelpCircle,
     Filter,
@@ -185,16 +185,15 @@ const Knowledge = () => {
                     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                         <div className="flex items-center space-x-4">
                             <h1 className="text-2xl font-bold text-gray-800">Knowledge Base</h1>
-                            
+
                             {/* Tab Navigation */}
                             <div className="flex bg-gray-100 rounded-lg p-1">
                                 <button
                                     onClick={() => setActiveTab('documents')}
-                                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                                        activeTab === 'documents'
+                                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'documents'
                                             ? 'bg-white text-primary-600 shadow-sm'
                                             : 'text-gray-600 hover:text-gray-800'
-                                    }`}
+                                        }`}
                                 >
                                     <div className="flex items-center space-x-2">
                                         <FileText className="w-4 h-4" />
@@ -203,11 +202,10 @@ const Knowledge = () => {
                                 </button>
                                 <button
                                     onClick={() => setActiveTab('faqs')}
-                                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                                        activeTab === 'faqs'
+                                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'faqs'
                                             ? 'bg-white text-primary-600 shadow-sm'
                                             : 'text-gray-600 hover:text-gray-800'
-                                    }`}
+                                        }`}
                                 >
                                     <div className="flex items-center space-x-2">
                                         <HelpCircle className="w-4 h-4" />
@@ -256,7 +254,7 @@ const Knowledge = () => {
                 {activeTab === 'documents' && (
                     <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                         {documents
-                            .filter(doc => 
+                            .filter(doc =>
                                 doc.original_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                                 doc.filename.toLowerCase().includes(searchTerm.toLowerCase())
                             )
@@ -272,7 +270,7 @@ const Knowledge = () => {
                                         <h3 className="font-semibold text-gray-800 mb-2 truncate" title={document.original_name}>
                                             {document.original_name}
                                         </h3>
-                                        
+
                                         <div className="space-y-2 text-sm">
                                             <div className="flex items-center justify-between">
                                                 <span className="text-gray-500">Type</span>
@@ -280,28 +278,27 @@ const Knowledge = () => {
                                                     {document.file_type}
                                                 </span>
                                             </div>
-                                            
+
                                             <div className="flex items-center justify-between">
                                                 <span className="text-gray-500">Size</span>
                                                 <span className="font-medium text-gray-800">
                                                     {formatFileSize(document.file_size)}
                                                 </span>
                                             </div>
-                                            
+
                                             <div className="flex items-center justify-between">
                                                 <span className="text-gray-500">Uploaded</span>
                                                 <span className="font-medium text-gray-800">
                                                     {formatDate(document.upload_date)}
                                                 </span>
                                             </div>
-                                            
+
                                             <div className="flex items-center justify-between">
                                                 <span className="text-gray-500">Status</span>
-                                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                                    document.processed 
-                                                        ? 'bg-green-100 text-green-800' 
+                                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${document.processed
+                                                        ? 'bg-green-100 text-green-800'
                                                         : 'bg-yellow-100 text-yellow-800'
-                                                }`}>
+                                                    }`}>
                                                     {document.processed ? 'Processed' : 'Processing'}
                                                 </span>
                                             </div>
@@ -315,12 +312,12 @@ const Knowledge = () => {
                                                     <span>View</span>
                                                 </div>
                                             </button>
-                                            
+
                                             <div className="flex items-center space-x-2">
                                                 <button className="text-gray-500 hover:text-gray-700 p-1">
                                                     <Download className="w-4 h-4" />
                                                 </button>
-                                                <button 
+                                                <button
                                                     onClick={() => handleDeleteDocument(document.id)}
                                                     className="text-red-500 hover:text-red-700 p-1"
                                                 >
@@ -338,7 +335,7 @@ const Knowledge = () => {
                 {activeTab === 'faqs' && (
                     <div className="space-y-4">
                         {faqs
-                            .filter(faq => 
+                            .filter(faq =>
                                 faq.question_am.toLowerCase().includes(searchTerm.toLowerCase()) ||
                                 faq.question_en.toLowerCase().includes(searchTerm.toLowerCase()) ||
                                 faq.answer_am.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -357,7 +354,7 @@ const Knowledge = () => {
                                                         Priority: {faq.priority}
                                                     </span>
                                                 </div>
-                                                
+
                                                 <div className="space-y-2">
                                                     <div>
                                                         <span className="text-sm text-gray-500">Question (Amharic)</span>
@@ -365,7 +362,7 @@ const Knowledge = () => {
                                                             {faq.question_am}
                                                         </p>
                                                     </div>
-                                                    
+
                                                     {faq.question_en && (
                                                         <div>
                                                             <span className="text-sm text-gray-500">Question (English)</span>
@@ -376,7 +373,7 @@ const Knowledge = () => {
                                                     )}
                                                 </div>
                                             </div>
-                                            
+
                                             <div className="flex items-center space-x-2">
                                                 <button
                                                     onClick={() => {
@@ -387,7 +384,7 @@ const Knowledge = () => {
                                                 >
                                                     <Edit className="w-4 h-4" />
                                                 </button>
-                                                <button 
+                                                <button
                                                     onClick={() => handleDeleteFAQ(faq.id)}
                                                     className="text-red-500 hover:text-red-700 p-1"
                                                 >
@@ -403,7 +400,7 @@ const Knowledge = () => {
                                                     {faq.answer_am}
                                                 </p>
                                             </div>
-                                            
+
                                             {faq.answer_en && (
                                                 <div>
                                                     <span className="text-sm text-gray-500">Answer (English)</span>
@@ -421,20 +418,20 @@ const Knowledge = () => {
 
                 {/* Empty States */}
                 {((activeTab === 'documents' && documents.length === 0) ||
-                  (activeTab === 'faqs' && faqs.length === 0)) && (
-                    <div className="bg-white rounded-xl shadow-sm p-12 text-center border border-gray-100">
-                        <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                        <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                            No {activeTab} found
-                        </h3>
-                        <p className="text-gray-600">
-                            {activeTab === 'documents' 
-                                ? 'Upload your first document to get started'
-                                : 'Create your first FAQ to get started'
-                            }
-                        </p>
-                    </div>
-                )}
+                    (activeTab === 'faqs' && faqs.length === 0)) && (
+                        <div className="bg-white rounded-xl shadow-sm p-12 text-center border border-gray-100">
+                            <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                            <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                                No {activeTab} found
+                            </h3>
+                            <p className="text-gray-600">
+                                {activeTab === 'documents'
+                                    ? 'Upload your first document to get started'
+                                    : 'Create your first FAQ to get started'
+                                }
+                            </p>
+                        </div>
+                    )}
             </div>
 
             {/* Upload Modal */}
@@ -452,7 +449,7 @@ const Knowledge = () => {
                                 </button>
                             </div>
                         </div>
-                        
+
                         <div className="p-6">
                             <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center">
                                 <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
@@ -497,9 +494,9 @@ const Knowledge = () => {
                                 </button>
                             </div>
                         </div>
-                        
+
                         <div className="p-6">
-                            <FAQForm 
+                            <FAQForm
                                 onSubmit={handleFAQSubmit}
                                 initialData={editingFAQ}
                                 onCancel={() => {
@@ -540,20 +537,20 @@ const FAQForm = ({ onSubmit, initialData, onCancel }) => {
                     </label>
                     <textarea
                         value={formData.question_am}
-                        onChange={(e) => setFormData({...formData, question_am: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, question_am: e.target.value })}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none amharic-text"
                         rows={3}
                         required
                     />
                 </div>
-                
+
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                         Question (English)
                     </label>
                     <textarea
                         value={formData.question_en}
-                        onChange={(e) => setFormData({...formData, question_en: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, question_en: e.target.value })}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
                         rows={3}
                     />
@@ -567,20 +564,20 @@ const FAQForm = ({ onSubmit, initialData, onCancel }) => {
                     </label>
                     <textarea
                         value={formData.answer_am}
-                        onChange={(e) => setFormData({...formData, answer_am: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, answer_am: e.target.value })}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none amharic-text"
                         rows={4}
                         required
                     />
                 </div>
-                
+
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                         Answer (English)
                     </label>
                     <textarea
                         value={formData.answer_en}
-                        onChange={(e) => setFormData({...formData, answer_en: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, answer_en: e.target.value })}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
                         rows={4}
                     />
@@ -594,7 +591,7 @@ const FAQForm = ({ onSubmit, initialData, onCancel }) => {
                     </label>
                     <select
                         value={formData.category}
-                        onChange={(e) => setFormData({...formData, category: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
                     >
                         <option value="General">General</option>
@@ -603,14 +600,14 @@ const FAQForm = ({ onSubmit, initialData, onCancel }) => {
                         <option value="Account">Account</option>
                     </select>
                 </div>
-                
+
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                         Priority
                     </label>
                     <select
                         value={formData.priority}
-                        onChange={(e) => setFormData({...formData, priority: parseInt(e.target.value)})}
+                        onChange={(e) => setFormData({ ...formData, priority: parseInt(e.target.value) })}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
                     >
                         <option value={1}>High</option>
