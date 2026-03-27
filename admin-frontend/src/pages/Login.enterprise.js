@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { Eye, EyeOff, LogIn, Shield, Mail, Lock } from 'lucide-react';
+import { authAPI } from '../services/api';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -14,19 +15,39 @@ const Login = () => {
         setLoading(true);
 
         try {
-            // Simulate login - in production, this would call your API
-            if (email === 'admin@aiassistant.com' && password === 'admin123') {
-                localStorage.setItem('token', 'mock-token-' + Date.now());
+            console.log('🔐 Attempting login with:', email);
+
+            // Call real API
+            const response = await authAPI.login({ email, password });
+
+            if (response.data.token && response.data.user) {
+                // Store real token and user data
+                localStorage.setItem('token', response.data.token);
+                localStorage.setItem('user', JSON.stringify(response.data.user));
+
                 if (rememberMe) {
                     localStorage.setItem('rememberEmail', email);
                 }
+
+                console.log('✅ Real login successful!');
+                console.log('🔑 Real token stored:', response.data.token);
+                console.log('👤 Real user stored:', response.data.user);
+
                 toast.success('Login successful!');
                 window.location.href = '/dashboard';
             } else {
                 toast.error('Invalid credentials');
             }
         } catch (error) {
-            toast.error('Login failed');
+            console.error('❌ Login error:', error);
+
+            if (error.response?.data?.error) {
+                toast.error(error.response.data.error);
+            } else if (error.message?.includes('timeout')) {
+                toast.error('Server timeout - please try again');
+            } else {
+                toast.error('Login failed - please try again');
+            }
         } finally {
             setLoading(false);
         }
@@ -124,9 +145,13 @@ const Login = () => {
                                 </label>
                             </div>
                             <div className="text-sm">
-                                <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
+                                <button
+                                    type="button"
+                                    className="font-medium text-blue-600 hover:text-blue-500"
+                                    onClick={() => console.log('Forgot password clicked')}
+                                >
                                     Forgot your password?
-                                </a>
+                                </button>
                             </div>
                         </div>
 
@@ -153,31 +178,37 @@ const Login = () => {
                     </form>
 
                     {/* Demo Credentials */}
-                    <div className="mt-6 p-4 bg-blue-50 rounded-xl border border-blue-200">
-                        <div className="flex items-center gap-2 mb-2">
-                            <Shield className="w-4 h-4 text-blue-600" />
-                            <h4 className="text-sm font-semibold text-blue-800">Demo Credentials</h4>
-                        </div>
-                        <div className="text-sm text-blue-700">
-                            <p className="font-mono bg-white px-2 py-1 rounded border border-blue-300 inline-block">
-                                Email: admin@aiassistant.com
-                            </p>
-                            <p className="font-mono bg-white px-2 py-1 rounded border border-blue-300 inline-block mt-1">
-                                Password: admin123
-                            </p>
-                        </div>
-                    </div>
+
+
                 </div>
 
                 {/* Footer */}
                 <div className="text-center text-sm text-gray-500">
                     <p>&copy; 2024 Amharic AI Assistant. All rights reserved.</p>
                     <div className="flex items-center justify-center gap-4 mt-2">
-                        <a href="#" className="text-blue-600 hover:text-blue-500">Privacy Policy</a>
+                        <button
+                            type="button"
+                            className="text-blue-600 hover:text-blue-500"
+                            onClick={() => console.log('Privacy Policy clicked')}
+                        >
+                            Privacy Policy
+                        </button>
                         <span>&bull;</span>
-                        <a href="#" className="text-blue-600 hover:text-blue-500">Terms of Service</a>
+                        <button
+                            type="button"
+                            className="text-blue-600 hover:text-blue-500"
+                            onClick={() => console.log('Terms of Service clicked')}
+                        >
+                            Terms of Service
+                        </button>
                         <span>&bull;</span>
-                        <a href="#" className="text-blue-600 hover:text-blue-500">Support</a>
+                        <button
+                            type="button"
+                            className="text-blue-600 hover:text-blue-500"
+                            onClick={() => console.log('Support clicked')}
+                        >
+                            Support
+                        </button>
                     </div>
                 </div>
             </div>
