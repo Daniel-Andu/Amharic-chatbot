@@ -15,8 +15,18 @@ async function runMigration() {
             'utf8'
         );
 
-        await client.query(schemaSQL);
-        console.log('✅ Schema created successfully');
+        // Execute schema with error handling for existing indexes
+        try {
+            await client.query(schemaSQL);
+            console.log('✅ Schema created successfully');
+        } catch (error) {
+            // Ignore index already exists errors
+            if (error.code === '42P07') {
+                console.log('⚠️  Some indexes already exist, continuing...');
+            } else {
+                throw error;
+            }
+        }
 
         // Create default admin user
         const hashedPassword = await bcrypt.hash('admin123', 10);
