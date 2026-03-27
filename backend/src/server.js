@@ -81,10 +81,31 @@ app.get('/health', (req, res) => {
     });
 });
 
-// Test endpoints directly
-app.post('/api/chat/message', chatController.sendMessage);
-app.get('/api/dashboard/stats', dashboardController.getStats);
-app.get('/api/dashboard/notifications', dashboardController.getNotifications);
+// Test endpoints directly with debugging
+app.post('/api/chat/message', (req, res) => {
+    console.log('🔥 Direct /api/chat/message hit!');
+    console.log('🔥 Body:', req.body);
+    console.log('🔥 Headers:', req.headers);
+
+    // Call the controller directly
+    chatController.sendMessage(req, res);
+});
+
+app.get('/api/dashboard/stats', (req, res) => {
+    console.log('🔥 Direct /api/dashboard/stats hit!');
+    dashboardController.getStats(req, res);
+});
+
+app.get('/api/dashboard/notifications', (req, res) => {
+    console.log('🔥 Direct /api/dashboard/notifications hit!');
+    dashboardController.getNotifications(req, res);
+});
+
+// Simple test endpoint
+app.post('/api/test', (req, res) => {
+    console.log('🔥 Test endpoint hit!');
+    res.json({ message: 'Test working', body: req.body });
+});
 
 // 404 handler - MUST be last
 app.use('*', (req, res) => {
