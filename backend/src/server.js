@@ -72,7 +72,8 @@ app.get('/health', (req, res) => {
         timestamp: new Date().toISOString(),
         uptime: process.uptime(),
         environment: process.env.NODE_ENV,
-        version: '984a2e8'
+        version: 'e8c48c9-latest',
+        message: 'Backend with all fixes applied'
     });
 });
 
