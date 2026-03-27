@@ -8,12 +8,16 @@ const dashboardController = require('../controllers/dashboardController');
 const knowledgeController = require('../controllers/knowledgeController');
 const voiceController = require('../controllers/voiceController');
 const { authMiddleware, adminOnly } = require('../middleware/auth');
+const versionRoutes = require('./version');
 
 // Multer for audio file uploads
 const audioUpload = multer({
     storage: multer.memoryStorage(),
     limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
 });
+
+// Version route
+router.use('/version', versionRoutes);
 
 // Auth routes
 router.post('/auth/login', authController.login);
