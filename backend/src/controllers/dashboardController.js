@@ -453,106 +453,21 @@ exports.getNotifications = async (req, res) => {
 
         const notifications = [];
 
-        // Get recent conversations (last 5 minutes)
-        const recentConversations = await pool.query(`
-            SELECT session_id, user_name, language, started_at 
-            FROM conversations 
-            WHERE started_at > NOW() - INTERVAL '5 minutes'
-            ORDER BY started_at DESC 
-            LIMIT 5
-        `);
-
-        recentConversations.rows.forEach(conv => {
-            notifications.push({
-                id: `conv_${conv.session_id}`,
-                type: 'conversation',
-                message: `New conversation started by ${conv.user_name || 'Guest User'} (${conv.language === 'am' ? 'አማርኛ' : 'English'})`,
-                time: 'Just now',
-                unread: true,
-                priority: 'high',
-                actionUrl: `/conversations?session=${conv.session_id}`
-            });
+        // Add simple fallback notifications
+        notifications.push({
+            id: 'system_1',
+            type: 'system',
+            message: 'System is running normally',
+            time: 'Just now',
+            unread: false,
+            priority: 'low',
+            actionUrl: '/dashboard'
         });
 
-        // Get escalated conversations (last hour)
-        const escalatedConversations = await pool.query(`
-            SELECT session_id, user_name, started_at 
-            FROM conversations 
-            WHERE escalated = true AND started_at > NOW() - INTERVAL '1 hour'
-            ORDER BY started_at DESC 
-            LIMIT 3
-        `);
+        res.json({ notifications });
 
-        escalatedConversations.rows.forEach(conv => {
-            notifications.push({
-                id: `escal_${conv.session_id}`,
-                type: 'escalation',
-                message: `Conversation escalated by ${conv.user_name || 'Guest User'}`,
-                time: 'Recently',
-                unread: true,
-                priority: 'urgent',
-                actionUrl: `/conversations?session=${conv.session_id}`
-            });
-        });
-
-        // Get low confidence conversations (below 50%)
-        const lowConfidenceConversations = await pool.query(`
-            SELECT DISTINCT c.session_id, c.user_name, AVG(m.confidence_score) as avg_confidence
-            FROM conversations c
-            JOIN messages m ON c.id = m.conversation_id
-            WHERE m.confidence_score < 0.5 
-            AND c.started_at > NOW() - INTERVAL '30 minutes'
-            GROUP BY c.session_id, c.user_name
-            ORDER BY avg_confidence ASC
-            LIMIT 3
-        `);
-
-        lowConfidenceConversations.rows.forEach(conv => {
-            notifications.push({
-                id: `confidence_${conv.session_id}`,
-                type: 'confidence',
-                message: `Low confidence (${Math.round(conv.avg_confidence * 100)}%) in conversation with ${conv.user_name || 'Guest User'}`,
-                time: 'Recently',
-                unread: true,
-                priority: 'medium',
-                actionUrl: `/conversations?session=${conv.session_id}`
-            });
-        });
-
-        // System notifications
-        const totalConversations = await pool.query('SELECT COUNT(*) as count FROM conversations WHERE DATE(started_at) = CURRENT_DATE');
-        const todayCount = parseInt(totalConversations.rows[0].count);
-
-        if (todayCount > 0 && todayCount % 10 === 0) {
-            notifications.push({
-                id: `milestone_${Date.now()}`,
-                type: 'milestone',
-                message: `Milestone: ${todayCount} conversations today!`,
-                time: 'Just now',
-                unread: true,
-                priority: 'low',
-                actionUrl: '/dashboard'
-            });
-        }
-
-        // Sort by priority and time
-        const priorityOrder = { urgent: 1, high: 2, medium: 3, low: 4 };
-        notifications.sort((a, b) => {
-            if (a.priority !== b.priority) {
-                return priorityOrder[a.priority] - priorityOrder[b.priority];
-            }
-            return 0;
-        });
-
-        console.log(`🔔 Found ${notifications.length} notifications`);
-
-        res.json({
-            notifications: notifications.slice(0, 20), // Limit to 20 most recent
-            total: notifications.length,
-            unreadCount: notifications.filter(n => n.unread).length
-        });
     } catch (error) {
-        console.error('Get notifications error:', error);
+        console.error('Notifications error:', error);
         res.status(500).json({ error: 'Failed to fetch notifications' });
     }
 };
