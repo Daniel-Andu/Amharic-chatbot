@@ -4,8 +4,8 @@
     "description": "Backend for AI Assistant System with Amharic support - Azure OpenAI + RAG",
     "main": "src/server.js",
     "scripts": {
-        "start": "node src/server.js",
-        "dev": "node src/server.js",
+        "start": "node src/database-server.js",
+        "dev": "node src/database-server.js",
         "test": "echo \"Error: no test specified\" && exit 1",
         "migrate": "node src/database/migrate.js",
         "setup-vector": "node src/database/setup-vector.js",
