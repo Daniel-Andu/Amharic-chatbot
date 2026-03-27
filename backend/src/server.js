@@ -3,6 +3,10 @@ const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 
+// Import controllers directly for fallback routes
+const chatController = require('./controllers/chatController');
+const dashboardController = require('./controllers/dashboardController');
+
 // Set environment variables directly (for development)
 process.env.DB_HOST = process.env.DB_HOST || 'localhost';
 process.env.DB_NAME = process.env.DB_NAME || 'ai_assistant_db';
@@ -72,10 +76,15 @@ app.get('/health', (req, res) => {
         timestamp: new Date().toISOString(),
         uptime: process.uptime(),
         environment: process.env.NODE_ENV,
-        version: 'e8c48c9-latest',
-        message: 'Backend with all fixes applied'
+        version: '13a3f44-final',
+        message: 'Final fix - all routes working'
     });
 });
+
+// Test endpoints directly
+app.post('/api/chat/message', chatController.sendMessage);
+app.get('/api/dashboard/stats', dashboardController.getStats);
+app.get('/api/dashboard/notifications', dashboardController.getNotifications);
 
 // 404 handler - MUST be last
 app.use('*', (req, res) => {
