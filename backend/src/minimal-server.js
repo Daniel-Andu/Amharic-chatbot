@@ -27,8 +27,8 @@ app.get('/health', (req, res) => {
     res.json({
         status: 'OK',
         timestamp: new Date().toISOString(),
-        version: 'FINAL-FIX-999',
-        message: 'Minimal server - guaranteed to work'
+        version: 'FINAL-FIX-999-UPDATED',
+        message: 'Minimal server - guaranteed to work - UPDATED'
     });
 });
 
@@ -48,22 +48,22 @@ app.post('/api/chat/start', (req, res) => {
 app.post('/api/chat/message', (req, res) => {
     console.log('🔥 CHAT MESSAGE HIT!');
     console.log('🔥 Body:', req.body);
-    
+
     const { sessionId, message, language = 'en' } = req.body;
-    
+
     if (!message || !sessionId) {
         return res.status(400).json({ error: 'Message and session ID required' });
     }
-    
+
     // Simple AI response
     const responses = {
         'hello': 'Hello! How can I help you today?',
         'hi': 'Hi there! What would you like to know?',
         'default': 'Thank you for your message. I am here to help!'
     };
-    
+
     const response = responses[message.toLowerCase()] || responses.default;
-    
+
     res.json({
         message: {
             id: Date.now(),
@@ -119,7 +119,7 @@ app.get('/api/dashboard/notifications', (req, res) => {
 app.post('/api/auth/login', (req, res) => {
     console.log('🔥 LOGIN HIT!');
     const { email, password } = req.body;
-    
+
     if (email === 'admin@aiassistant.com' && password === 'admin123') {
         res.json({
             token: 'simple-jwt-token-' + Date.now(),
