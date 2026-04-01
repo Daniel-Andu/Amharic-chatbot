@@ -15,12 +15,26 @@ const ChatWidget = ({ embedded = false }) => {
     const messagesEndRef = useRef(null);
     const recognitionRef = useRef(null);
 
+    const handleLanguageChange = (newLanguage) => {
+        setLanguage(newLanguage);
+        // Restart conversation with new language
+        if (sessionId) {
+            // Clear current session and start new one
+            setSessionId(null);
+            setMessages([]);
+            // Start conversation will be called by useEffect
+        }
+    };
+
     const startConversation = useCallback(async () => {
-        console.log(' Starting conversation...');
+        console.log('ChatWidget.js:19  Starting conversation...');
         try {
-            const response = await chatAPI.startConversation(language);
-            console.log(' Conversation started:', response);
-            setSessionId(response.data.conversation.session_id);
+            // Generate or use existing sessionId
+            const currentSessionId = sessionId || `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+            const response = await chatAPI.startConversation(language, currentSessionId);
+            console.log('ChatWidget.js:22  Conversation started:', response);
+            setSessionId(currentSessionId);
 
             // Welcome message
             setMessages([{
@@ -39,8 +53,10 @@ const ChatWidget = ({ embedded = false }) => {
     }, [language]);
 
     useEffect(() => {
-        startConversation();
-    }, [startConversation]);
+        if (!sessionId) {
+            startConversation();
+        }
+    }, [language, sessionId]);
 
     useEffect(() => {
         scrollToBottom();
@@ -49,7 +65,7 @@ const ChatWidget = ({ embedded = false }) => {
     const formatRelativeTime = (timestamp) => {
         const now = new Date();
         const time = new Date(timestamp);
-        const diffInSeconds = Math.floor((now - time) / 1000);
+        const diffInSeconds = Math.floor((now.getTime() - time.getTime()) / 1000);
 
         if (diffInSeconds < 60) {
             return language === 'am' ? 'አሁን' : 'just now';
@@ -426,7 +442,7 @@ const ChatWidget = ({ embedded = false }) => {
                     <div className="flex items-center gap-2">
                         <select
                             value={language}
-                            onChange={(e) => setLanguage(e.target.value)}
+                            onChange={(e) => handleLanguageChange(e.target.value)}
                             className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg text-sm border border-white/30 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all"
                         >
                             <option value="am" className="text-gray-800">አማርኛ</option>

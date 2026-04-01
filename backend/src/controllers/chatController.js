@@ -1,19 +1,27 @@
-const pool = require('../config/database');
-const aiService = require('../services/aiService.fallback'); // Use fallback AI service
+const dbService = require('../database/database');
+const aiService = require('../services/aiService.huggingface'); // Use Hugging Face AI service
 const memoryStore = require('../services/memoryStore'); // Use memory store
 const { v4: uuidv4 } = require('uuid');
 
 exports.startConversation = async (req, res) => {
     try {
         const sessionId = uuidv4();
-        const { language = 'am' } = req.body;
+
+        // Enhanced language detection - check if request contains Amharic characters or language parameter
+        let detectedLanguage = 'en'; // Default to English
+        const amharicPattern = /[\u1200-\u137F]/;
+        if (req.body.language) {
+            detectedLanguage = req.body.language;
+        } else if (req.body.user_name && amharicPattern.test(req.body.user_name)) {
+            detectedLanguage = 'am';
+        }
 
         // Try database first, fallback to memory mode
         try {
-            const result = await pool.query(
+            const result = await dbService.pool.query(
                 `INSERT INTO conversations (session_id, user_ip, user_agent, language, user_name, email)
          VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-                [sessionId, req.ip, req.headers['user-agent'], language, 'Guest User', 'guest@example.com']
+                [sessionId, req.ip, req.headers['user-agent'], detectedLanguage, 'Guest User', 'guest@example.com']
             );
             res.json({ conversation: result.rows[0] });
         } catch (dbError) {
@@ -21,7 +29,7 @@ exports.startConversation = async (req, res) => {
             // Fallback: save to memory store
             memoryStore.saveConversation(sessionId, {
                 session_id: sessionId,
-                language,
+                language: detectedLanguage,
                 started_at: new Date(),
                 status: 'active',
                 user_ip: req.ip,
@@ -31,7 +39,7 @@ exports.startConversation = async (req, res) => {
             res.json({
                 conversation: {
                     session_id: sessionId,
-                    language,
+                    language: detectedLanguage,
                     started_at: new Date(),
                     status: 'active'
                 }
@@ -45,7 +53,19 @@ exports.startConversation = async (req, res) => {
 
 exports.sendMessage = async (req, res) => {
     try {
-        const { sessionId, message, messageType = 'text', language = 'am' } = req.body;
+        console.log('🔥 sendMessage called with body:', req.body);
+        const { sessionId, message, messageType = 'text' } = req.body;
+
+        // Enhanced language detection - check if message contains Amharic characters
+        let detectedLanguage = 'en'; // Default to English
+        const amharicPattern = /[\u1200-\u137F]/;
+        if (amharicPattern.test(message)) {
+            detectedLanguage = 'am';
+        } else if (req.body.language) {
+            detectedLanguage = req.body.language;
+        }
+
+        console.log('🔥 Detected language:', detectedLanguage);
 
         if (!message || !sessionId) {
             return res.status(400).json({ error: 'Message and session ID required' });
@@ -53,14 +73,16 @@ exports.sendMessage = async (req, res) => {
 
         const startTime = Date.now();
 
-        // Get AI response using original service
-        const aiResponse = await aiService.getResponse(message, language);
+        // Get AI response using Hugging Face service
+        console.log('🔥 About to call AI service with message:', message, 'language:', detectedLanguage);
+        const aiResponse = await aiService.getResponse(message, detectedLanguage);
+        console.log('🔥 AI service responded with:', aiResponse.response);
         const responseTime = Date.now() - startTime;
 
         // Try database operations, fallback to memory mode
         try {
-            // Get conversation
-            const convResult = await pool.query(
+            // Get conversation by session_id
+            const convResult = await dbService.pool.query(
                 'SELECT * FROM conversations WHERE session_id = $1',
                 [sessionId]
             );
@@ -71,26 +93,17 @@ exports.sendMessage = async (req, res) => {
 
             const conversation = convResult.rows[0];
 
-            // Track top questions
-            await pool.query(
-                `INSERT INTO top_questions (question, question_normalized, language, ask_count, last_asked)
-         VALUES ($1, $2, $3, 1, CURRENT_TIMESTAMP)
-         ON CONFLICT (question_normalized, language) 
-         DO UPDATE SET ask_count = top_questions.ask_count + 1, last_asked = CURRENT_TIMESTAMP`,
-                [message, message.toLowerCase().trim(), language]
-            );
-
             // Save message
-            const messageResult = await pool.query(
+            const messageResult = await dbService.pool.query(
                 `INSERT INTO messages (conversation_id, message_type, user_message, ai_response, 
        confidence_score, language, response_time_ms) 
        VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
-                [conversation.id, messageType, message, aiResponse.response,
-                aiResponse.confidence, language, responseTime]
+                [conversation.id, 'text', message, aiResponse.response,
+                aiResponse.confidence, detectedLanguage, responseTime]
             );
 
-            // Update conversation
-            await pool.query(
+            // Update conversation message count
+            await dbService.pool.query(
                 'UPDATE conversations SET total_messages = total_messages + 1 WHERE id = $1',
                 [conversation.id]
             );
@@ -141,7 +154,7 @@ exports.getConversationHistory = async (req, res) => {
     try {
         const { sessionId } = req.params;
 
-        const result = await pool.query(
+        const result = await dbService.pool.query(
             `SELECT m.*, c.language 
        FROM messages m
        JOIN conversations c ON m.conversation_id = c.id
@@ -161,7 +174,7 @@ exports.endConversation = async (req, res) => {
     try {
         const { sessionId } = req.params;
 
-        await pool.query(
+        await dbService.pool.query(
             'UPDATE conversations SET ended_at = CURRENT_TIMESTAMP WHERE session_id = $1',
             [sessionId]
         );

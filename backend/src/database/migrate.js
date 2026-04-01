@@ -1,10 +1,10 @@
 const fs = require('fs');
 const path = require('path');
-const pool = require('../config/database');
+const dbService = require('./database');
 const bcrypt = require('bcryptjs');
 
 async function runMigration() {
-    const client = await pool.connect();
+    const client = await dbService.pool.connect();
 
     try {
         console.log('🚀 Starting database migration...');

@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const pool = require('../config/database');
+const dbService = require('../database/database');
 
 exports.login = async (req, res) => {
     try {
@@ -9,12 +9,47 @@ exports.login = async (req, res) => {
 
         // Try database first
         try {
-            const result = await pool.query(
+            const result = await dbService.pool.query(
                 'SELECT * FROM users WHERE email = $1',
                 [email]
             );
 
             if (result.rows.length === 0) {
+                // If admin user doesn't exist, create it
+                if (email === 'admin@aiassistant.com' && password === 'admin123') {
+                    console.log('🔧 Creating admin user on-the-fly...');
+                    try {
+                        const hashedPassword = await bcrypt.hash('admin123', 10);
+                        const createResult = await dbService.pool.query(
+                            `INSERT INTO users (username, email, password_hash, role) 
+                   VALUES ($1, $2, $3, $4) RETURNING *`,
+                            ['admin', 'admin@aiassistant.com', hashedPassword, 'system_admin']
+                        );
+                        const user = createResult.rows[0];
+
+                        const token = jwt.sign(
+                            { id: user.id, email: user.email, role: user.role },
+                            process.env.JWT_SECRET || 'fallback-secret',
+                            { expiresIn: process.env.JWT_EXPIRE || '7d' }
+                        );
+
+                        console.log('✅ Admin user created and logged in successfully');
+
+                        return res.json({
+                            token,
+                            user: {
+                                id: user.id,
+                                username: user.username,
+                                email: user.email,
+                                role: user.role
+                            }
+                        });
+                    } catch (createError) {
+                        console.error('❌ Failed to create admin user:', createError);
+                        return res.status(500).json({ error: 'Failed to create admin user' });
+                    }
+                }
+
                 console.log('❌ User not found in database');
                 return res.status(401).json({ error: 'Invalid credentials' });
             }
@@ -87,7 +122,7 @@ exports.register = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const result = await pool.query(
+        const result = await dbService.pool.query(
             `INSERT INTO users (username, email, password_hash, role) 
        VALUES ($1, $2, $3, $4) RETURNING id, username, email, role`,
             [username, email, hashedPassword, role || 'admin']
@@ -116,7 +151,7 @@ exports.register = async (req, res) => {
 
 exports.getProfile = async (req, res) => {
     try {
-        const result = await pool.query(
+        const result = await dbService.pool.query(
             'SELECT id, username, email, role, created_at FROM users WHERE id = $1',
             [req.user.id]
         );

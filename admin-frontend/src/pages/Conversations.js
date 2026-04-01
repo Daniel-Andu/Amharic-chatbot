@@ -102,16 +102,47 @@ const Conversations = () => {
         return 'bg-red-500';
     };
 
-    const formatDuration = (seconds) => {
-        if (!seconds) return 'N/A';
-        if (seconds < 60) return `${seconds}s`;
-        if (seconds < 3600) return `${Math.floor(seconds / 60)}m ${seconds % 60}s`;
-        return `${Math.floor(seconds / 3600)}h ${Math.floor((seconds % 3600) / 60)}m`;
+    const formatDuration = (minutes) => {
+        if (!minutes || minutes === 0) return '0m';
+        if (minutes < 60) return `${minutes}m`;
+        const hours = Math.floor(minutes / 60);
+        const remainingMinutes = minutes % 60;
+        if (hours === 0) return `${remainingMinutes}m`;
+        return `${hours}h ${remainingMinutes}m`;
     };
 
     const formatRelativeTime = (dateString, language = 'en') => {
         if (!dateString) return 'Never';
-        const date = new Date(dateString);
+
+        // Handle different timestamp formats
+        let date;
+        if (typeof dateString === 'string') {
+            // Handle ISO format and other string formats
+            if (dateString.includes('T') && dateString.includes('Z')) {
+                // ISO format - remove Z to treat as local time
+                const localString = dateString.replace('Z', '');
+                date = new Date(localString);
+            } else if (dateString.includes('GMT')) {
+                // GMT format - extract date parts and create local date
+                const dateMatch = dateString.match(/(\w{3} \w{3} \d{2} \d{4} \d{2}:\d{2}:\d{2})/);
+                if (dateMatch) {
+                    const [, datePart] = dateMatch;
+                    date = new Date(datePart);
+                } else {
+                    date = new Date(dateString);
+                }
+            } else {
+                // Other string format
+                date = new Date(dateString);
+            }
+        } else if (typeof dateString === 'object') {
+            // If it's already a Date object, use it directly
+            date = dateString;
+        } else {
+            // If it's a timestamp number
+            date = new Date(dateString);
+        }
+
         const now = new Date();
         const diff = now - date;
 

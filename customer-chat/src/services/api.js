@@ -10,7 +10,7 @@ const api = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
-    timeout: 30000, // 30 second timeout
+    timeout: 25000, // 25 second timeout
 });
 
 // Add token to requests
@@ -37,7 +37,10 @@ api.interceptors.response.use(
 
 // Chat API
 export const chatAPI = {
-    startConversation: (language = 'am') => api.post('/chat/start', { language }),
+    startConversation: (language = 'am', sessionId = null) => {
+        const data = sessionId ? { language, sessionId } : { language };
+        return api.post('/chat/start', data);
+    },
     sendMessage: (data) => api.post('/chat/message', data),
     getHistory: (sessionId) => api.get(`/chat/history/${sessionId}`),
     endConversation: (sessionId) => api.post(`/chat/end/${sessionId}`),
