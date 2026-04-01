@@ -50,13 +50,13 @@ const ChatWidget = ({ embedded = false }) => {
             // Set a temporary session ID to allow testing
             setSessionId('temp-session-' + Date.now());
         }
-    }, [language]);
+    }, [language]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         if (!sessionId) {
             startConversation();
         }
-    }, [language, sessionId]);
+    }, [language, sessionId, startConversation]);
 
     useEffect(() => {
         scrollToBottom();
