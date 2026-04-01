@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL ||
     (process.env.NODE_ENV === 'production'
-        ? '/api'
+        ? 'https://amharic-chatbot-backend.onrender.com/api'
         : 'http://localhost:5000/api');
 
 console.log('🔗 API Base URL:', API_BASE_URL);

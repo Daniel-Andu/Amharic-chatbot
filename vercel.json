@@ -7,9 +7,20 @@
       "config": {
         "distDir": "build"
       }
+    },
+    {
+      "src": "admin-frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build"
+      }
     }
   ],
   "routes": [
+    {
+      "src": "/admin/(.*)",
+      "dest": "/admin-frontend/index.html"
+    },
     {
       "src": "/(.*)",
       "dest": "/customer-chat/index.html"
