@@ -64,11 +64,25 @@ class UnlimitedAIService {
             const normalizedMessage = this.normalizeMessage(userMessage);
 
             // Use intelligent fallbacks directly (no external APIs)
-            return this.generateIntelligentFallback(userMessage, language);
+            const response = this.generateIntelligentFallback(userMessage, language);
+
+            return {
+                response: response,
+                confidence: 0.95,
+                model: 'intelligent-fallback',
+                language: language,
+                source: 'fallback'
+            };
 
         } catch (error) {
             console.error('❌ Unlimited AI Service Error:', error);
-            return 'I apologize, but I am having technical difficulties at the moment. Please try again in a few moments.';
+            return {
+                response: 'I apologize, but I am having technical difficulties at the moment. Please try again in a few moments.',
+                confidence: 0.1,
+                model: 'error',
+                language: language,
+                source: 'error'
+            };
         }
     }
 }
