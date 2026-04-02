@@ -87,19 +87,8 @@ class UnlimitedAIService {
         try {
             console.log(`🤖 Unlimited AI - Processing: "${userMessage}" in ${language}`);
 
-            // Normalize message for better matching
-            const normalizedMessage = this.normalizeMessage(userMessage);
-
-            // Use intelligent fallbacks directly (no external APIs)
-            const response = this.generateIntelligentFallback(userMessage, language);
-
-            return {
-                response: response,
-                confidence: 0.95,
-                model: 'intelligent-fallback',
-                language: language,
-                source: 'fallback'
-            };
+            // Always use Groq AI for intelligent responses
+            return await this.callGroqAI(userMessage, language);
 
         } catch (error) {
             console.error('❌ Unlimited AI Service Error:', error);
@@ -111,6 +100,55 @@ class UnlimitedAIService {
                 source: 'error'
             };
         }
+    }
+
+    async callGroqAI(message, language) {
+        try {
+            if (!this.apiKey || !this.groqService) {
+                throw new Error('Groq API not configured');
+            }
+
+            const systemPrompt = this.getSystemPrompt(language);
+
+            console.log('🤖 Calling Groq API...');
+
+            const completion = await this.groqService.chat.completions.create({
+                messages: [
+                    { role: "system", content: systemPrompt },
+                    { role: "user", content: message }
+                ],
+                model: "llama-3.3-70b-versatile",
+                temperature: 0.7,
+                max_tokens: 1024,
+                top_p: 0.9,
+            });
+
+            if (completion.choices && completion.choices[0] && completion.choices[0].message) {
+                let aiResponse = completion.choices[0].message.content.trim();
+                return {
+                    response: aiResponse,
+                    confidence: 0.85,
+                    model: 'llama-3.3-70b-versatile',
+                    language: language,
+                    source: 'ai'
+                };
+            }
+
+            throw new Error('Invalid Groq response');
+
+        } catch (error) {
+            console.error('❌ Groq API error:', error.message);
+            throw error;
+        }
+    }
+
+    getSystemPrompt(language) {
+        const prompts = {
+            am: `You are a helpful, professional AI customer support assistant. The user is communicating in Amharic. You MUST respond EXCLUSIVELY in native, natural, and grammatically correct Amharic (አማርኛ). Be polite and helpful. Provide direct, specific answers to questions. Do not use English words unless referring to specific technical terms. Keep responses concise but informative.`,
+            en: `You are a helpful AI assistant for a company's customer support system. You provide intelligent, helpful, and accurate responses to customer questions. You can answer questions about various topics including science, geography, history, technology, and general knowledge. Be conversational and friendly. Provide direct, specific answers. If you don't know something, admit it politely. Keep responses concise but informative.`
+        };
+
+        return prompts[language] || prompts.en;
     }
 }
 
