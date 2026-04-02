@@ -138,7 +138,64 @@ class UnlimitedAIService {
 
         } catch (error) {
             console.error('❌ Groq API error:', error.message);
-            throw error;
+            // Try Hugging Face as backup
+            return await this.callHuggingFaceAI(message, language);
+        }
+    }
+
+    async callHuggingFaceAI(message, language) {
+        try {
+            const huggingFaceApiKey = process.env.HUGGINGFACE_API_KEY;
+            if (!huggingFaceApiKey) {
+                throw new Error('Hugging Face API key not configured');
+            }
+
+            console.log('🤖 Calling Hugging Face API...');
+
+            const response = await fetch('https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${huggingFaceApiKey}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    inputs: message,
+                    parameters: {
+                        max_length: 100,
+                        temperature: 0.7,
+                    }
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Hugging Face API error');
+            }
+
+            const data = await response.json();
+
+            if (data && data[0] && data[0].generated_text) {
+                let aiResponse = data[0].generated_text.trim();
+                return {
+                    response: aiResponse,
+                    confidence: 0.75,
+                    model: 'DialoGPT-medium',
+                    language: language,
+                    source: 'huggingface'
+                };
+            }
+
+            throw new Error('Invalid Hugging Face response');
+
+        } catch (error) {
+            console.error('❌ Hugging Face API error:', error.message);
+            // Final fallback to intelligent responses
+            return {
+                response: this.generateIntelligentFallback(message, language),
+                confidence: 0.60,
+                model: 'intelligent-fallback',
+                language: language,
+                source: 'fallback'
+            };
         }
     }
 
