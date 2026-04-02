@@ -185,159 +185,170 @@ class UnlimitedAIService {
             }
             if (lowerMessage.includes('ምን') || lowerMessage.includes('what')) {
                 if (lowerMessage.includes('ኩባንያ')) {
-                    return 'እኛ የኩባንያው AI እርሳኛ ልክ ደንበኞችን ለመለስ እና ድጋፍ ማገኘያ ነኝ።';
+                    return 'አማርኛ ቋን ሰማይ ነጋጽር ነው። እስ ምክልተያችን የሰውር የሚምርትም እንዴት አማርኛ ነኝ፣ የሚምርትም እንደሚሰራ ይግለጹልኝ።';
                 }
-                return 'ይህ ጥሩ ጥያቄ ነው። ለመልስ እየማገድጋፍ ነኝ።';
+                if (lowerMessage.includes('አማርኛ') || lowerMessage.includes('language')) {
+                    return 'አማርኛ በሰማይ ነጋጽር ነው። እስ የሴማቲክ ተውምር ነው፣ሲ ሲምጊ ነው። ይልማይ የተለላይ እንዴት አለልጣስ ይግለጹልኝ።';
+                }
+                return 'እኛ የኩባንያው AI እርሳኛ ልክ ደንበኞችን ለመለስ እና ድጋፍ ማገኘያ ነኝ።';
             }
-            if (lowerMessage.includes('እንዴት') || lowerMessage.includes('how')) {
-                return 'እኔ የተማማ መረጃዎችን ለመልስ ይችላል።';
-            }
-            return 'እኔ ማንግግዎታለሁ።';
-        } else {
-            // English intelligent responses
-            if (lowerMessage.includes('who')) {
-                return 'I am an AI assistant designed to help answer your questions and provide support for our company services. I can assist with various topics including science, geography, history, and general knowledge.';
-            }
-            if (lowerMessage.includes('where')) {
-                if (lowerMessage.includes('capital') && lowerMessage.includes('ethiopia')) {
-                    return 'The capital city of Ethiopia is Addis Ababa.';
-                }
-                if (lowerMessage.includes('bahir dar')) {
-                    return 'Bahir Dar is located in northwestern Ethiopia, situated on the southern shore of Lake Tana.';
-                }
-                if (lowerMessage.includes('ethiopia')) {
-                    return 'Ethiopia is a country located in the Horn of Africa, with Addis Ababa as its capital city. It is known for its rich history, diverse culture, and being the origin of coffee.';
-                }
-                return 'That\'s a great question about location! I can help you with geographical information about various places.';
-            }
-            if (lowerMessage.includes('what')) {
-                if (lowerMessage.includes('ethiopia')) {
-                    return 'Ethiopia is a fascinating country in East Africa with a history spanning thousands of years. It\'s known as the cradle of humanity, home to ancient civilizations, the origin of coffee, and has never been colonized. Its capital is Addis Ababa, and it\'s famous for landmarks like Lalibela\'s rock churches and the Simien Mountains.';
-                }
-                if (lowerMessage.includes('company') && lowerMessage.includes('doing')) {
-                    return 'Our company provides AI-powered customer support solutions. We specialize in creating intelligent conversation systems that help businesses provide 24/7 support to their customers. Our platform supports multiple languages including Amharic and English, and we use advanced AI technology to ensure accurate and helpful responses.';
-                }
-                if (lowerMessage.includes('biology')) {
-                    return 'Biology is the scientific study of life and living organisms. It encompasses various fields including genetics, evolution, ecology, microbiology, and more.';
-                }
-                if (lowerMessage.includes('physics')) {
-                    return 'Physics is the natural science that studies matter, energy, and their interactions in the universe. It seeks to understand how the universe behaves at every scale.';
-                }
-                if (lowerMessage.includes('chemistry')) {
-                    return 'Chemistry is the scientific study of matter, its properties, composition, structure, and the changes it undergoes during chemical reactions.';
-                }
-                if (lowerMessage.includes('mathematics')) {
-                    return 'Mathematics is the abstract science of number, quantity, and space. It provides the foundation for understanding patterns, structures, and relationships in the world around us.';
-                }
-                return 'That\'s an excellent question! I can provide information about various topics including science, technology, geography, history, and general knowledge. What specific topic would you like to learn about?';
-            }
-            if (lowerMessage.includes('how')) {
-                if (lowerMessage.includes('work') || lowerMessage.includes('function')) {
-                    return 'I work by analyzing your questions and providing relevant answers based on my training and available knowledge. I use advanced AI technology to understand your queries and generate helpful responses.';
-                }
-                return 'That\'s a practical question! I can explain processes and procedures. To give you the most helpful guidance, could you tell me more about what specific process or method you\'d like to understand?';
-            }
-            if (lowerMessage.includes('why')) {
-                return 'That\'s a thoughtful question! I can explain reasons and causes. To provide you with the most comprehensive explanation, could you specify what phenomenon or situation you\'d like me to explain?';
-            }
-            if (lowerMessage.includes('advice') || lowerMessage.includes('advise')) {
-                return 'I\'d be happy to provide some helpful advice! Here are a few key areas: 1) Continuous learning - always seek to expand your knowledge and skills. 2) Stay curious - ask questions and explore new ideas. 3) Take care of your health - both physical and mental well-being are crucial. 4) Build meaningful relationships - connect with others and nurture your social bonds. 5) Set clear goals - having direction helps you stay focused and motivated. What specific area would you like advice about?';
-            }
-            return 'I\'m here to help you with information and assistance! I can answer questions about various topics including science, geography, history, technology, and general knowledge. What would you like to know more about?';
+            return 'ይህ ጥሩ ጥያቄ ነው። ለመልስ እየማገድጋፍ ነኝ።';
         }
+        if (lowerMessage.includes('እንዴት') || lowerMessage.includes('how')) {
+            return 'እኔ የተማማ መረጃዎችን ለመልስ ይችላል።';
+        }
+        return 'እኔ ማንግግዎታለሁ።';
+    } else {
+    // English intelligent responses
+    if (lowerMessage.includes('who')) {
+        return 'I am an AI assistant designed to help answer your questions and provide support for our company services. I can assist with various topics including science, geography, history, and general knowledge.';
+    }
+    if (lowerMessage.includes('where')) {
+        if (lowerMessage.includes('capital') && lowerMessage.includes('ethiopia')) {
+            return 'The capital city of Ethiopia is Addis Ababa.';
+        }
+        if (lowerMessage.includes('bahir dar')) {
+            return 'Bahir Dar is located in northwestern Ethiopia, situated on the southern shore of Lake Tana.';
+        }
+        if (lowerMessage.includes('ethiopia')) {
+            return 'Ethiopia is a country located in the Horn of Africa, with Addis Ababa as its capital city. It is known for its rich history, diverse culture, and being the origin of coffee.';
+        }
+        return 'That\'s a great question about location! I can help you with geographical information about various places.';
+    }
+    if (lowerMessage.includes('what')) {
+        if (lowerMessage.includes('artificial intelligence') || lowerMessage.includes('ai')) {
+            return 'Artificial Intelligence (AI) is the simulation of human intelligence in machines that are programmed to think and learn. It includes machine learning, neural networks, and deep learning. AI systems can perform tasks like understanding language, recognizing images, making decisions, and solving problems. Modern AI uses large language models and algorithms to process information and provide intelligent responses.';
+        }
+        if (lowerMessage.includes('ethiopia')) {
+            return 'Ethiopia is a fascinating country in East Africa with a history spanning thousands of years. It\'s known as the cradle of humanity, home to ancient civilizations, the origin of coffee, and has never been colonized. Its capital is Addis Ababa, and it\'s famous for landmarks like Lalibela\'s rock churches and the Simien Mountains.';
+        }
+        if (lowerMessage.includes('company') && lowerMessage.includes('doing')) {
+            return 'Our company provides AI-powered customer support solutions. We specialize in creating intelligent conversation systems that help businesses provide 24/7 support to their customers. Our platform supports multiple languages including Amharic and English, and we use advanced AI technology to ensure accurate and helpful responses.';
+        }
+        if (lowerMessage.includes('how can i improve') && (lowerMessage.includes('programming') || lowerMessage.includes('coding'))) {
+            return 'To improve your programming skills: 1) Practice daily with coding challenges on platforms like LeetCode, HackerRank, or CodeWars. 2) Build real projects - start small and gradually increase complexity. 3) Learn data structures and algorithms thoroughly. 4) Read clean code by Robert C. Martin. 5) Join coding communities and contribute to open source. 6) Master version control (Git). 7) Learn multiple programming languages. 8) Study computer science fundamentals. Consistency is key - code every day!';
+        }
+        if (lowerMessage.includes('biology')) {
+            return 'Biology is the scientific study of life and living organisms. It encompasses various fields including genetics, evolution, ecology, microbiology, and more.';
+        }
+        if (lowerMessage.includes('physics')) {
+            return 'Physics is the natural science that studies matter, energy, and their interactions in the universe. It seeks to understand how the universe behaves at every scale.';
+        }
+        if (lowerMessage.includes('chemistry')) {
+            return 'Chemistry is the scientific study of matter, its properties, composition, structure, and the changes it undergoes during chemical reactions.';
+        }
+        if (lowerMessage.includes('mathematics')) {
+            return 'Mathematics is the abstract science of number, quantity, and space. It provides the foundation for understanding patterns, structures, and relationships in the world around us.';
+        }
+        return 'That\'s an excellent question! I can provide information about various topics including science, technology, geography, history, and general knowledge. What specific topic would you like to learn about?';
+    }
+    if (lowerMessage.includes('how')) {
+        if (lowerMessage.includes('work') || lowerMessage.includes('function')) {
+            return 'I work by analyzing your questions and providing relevant answers based on my training and available knowledge. I use advanced AI technology to understand your queries and generate helpful responses.';
+        }
+        return 'That\'s a practical question! I can explain processes and procedures. To give you the most helpful guidance, could you tell me more about what specific process or method you\'d like to understand?';
+    }
+    if (lowerMessage.includes('why')) {
+        return 'That\'s a thoughtful question! I can explain reasons and causes. To provide you with the most comprehensive explanation, could you specify what phenomenon or situation you\'d like me to explain?';
+    }
+    if (lowerMessage.includes('advice') || lowerMessage.includes('advise')) {
+        return 'I\'d be happy to provide some helpful advice! Here are a few key areas: 1) Continuous learning - always seek to expand your knowledge and skills. 2) Stay curious - ask questions and explore new ideas. 3) Take care of your health - both physical and mental well-being are crucial. 4) Build meaningful relationships - connect with others and nurture your social bonds. 5) Set clear goals - having direction helps you stay focused and motivated. What specific area would you like advice about?';
+    }
+    return 'I\'m here to help you with information and assistance! I can answer questions about various topics including science, geography, history, technology, and general knowledge. What would you like to know more about?';
+}
     }
 
-    normalizeMessage(message) {
-        return message.toLowerCase()
-            .trim()
-            .replace(/[^\w\s\u1200-\u137F]/g, '') // Keep letters, numbers, spaces, and Amharic characters
-            .replace(/\s+/g, ' ');
-    }
+normalizeMessage(message) {
+    return message.toLowerCase()
+        .trim()
+        .replace(/[^\w\s\u1200-\u137F]/g, '') // Keep letters, numbers, spaces, and Amharic characters
+        .replace(/\s+/g, ' ');
+}
 
     async searchFAQs(message, language) {
-        try {
-            if (!this.dbService.isConnectedStatus()) {
-                return null;
-            }
+    try {
+        if (!this.dbService.isConnectedStatus()) {
+            return null;
+        }
 
-            // Try exact match first (most accurate)
-            const exactQuery = language === 'am'
-                ? `SELECT question_am, answer_am FROM faqs WHERE is_active = true AND LOWER(question_am) = LOWER($1) LIMIT 1`
-                : `SELECT question_en, answer_en FROM faqs WHERE is_active = true AND LOWER(question_en) = LOWER($1) LIMIT 1`;
+        // Try exact match first (most accurate)
+        const exactQuery = language === 'am'
+            ? `SELECT question_am, answer_am FROM faqs WHERE is_active = true AND LOWER(question_am) = LOWER($1) LIMIT 1`
+            : `SELECT question_en, answer_en FROM faqs WHERE is_active = true AND LOWER(question_en) = LOWER($1) LIMIT 1`;
 
-            const exactResult = await this.dbService.query(exactQuery, [message]);
+        const exactResult = await this.dbService.query(exactQuery, [message]);
 
-            if (exactResult.rows.length > 0) {
-                const faq = exactResult.rows[0];
+        if (exactResult.rows.length > 0) {
+            const faq = exactResult.rows[0];
+            return language === 'am' ? faq.answer_am : faq.answer_en;
+        }
+
+        // Try phrase matching (more specific than keyword)
+        const messageWords = message.toLowerCase().split(' ').filter(w => w.length > 2);
+        if (messageWords.length > 0) {
+            const phraseConditions = messageWords.map((_, index) => `LOWER(question_${language}) LIKE $${index + 1}`).join(' AND ');
+            const phraseQuery = language === 'am'
+                ? `SELECT question_am, answer_am FROM faqs WHERE is_active = true AND (${phraseConditions}) LIMIT 1`
+                : `SELECT question_en, answer_en FROM faqs WHERE is_active = true AND (${phraseConditions}) LIMIT 1`;
+
+            const phraseParams = messageWords.map(word => `%${word}%`);
+            const phraseResult = await this.dbService.query(phraseQuery, phraseParams);
+
+            if (phraseResult.rows.length > 0) {
+                const faq = phraseResult.rows[0];
                 return language === 'am' ? faq.answer_am : faq.answer_en;
             }
-
-            // Try phrase matching (more specific than keyword)
-            const messageWords = message.toLowerCase().split(' ').filter(w => w.length > 2);
-            if (messageWords.length > 0) {
-                const phraseConditions = messageWords.map((_, index) => `LOWER(question_${language}) LIKE $${index + 1}`).join(' AND ');
-                const phraseQuery = language === 'am'
-                    ? `SELECT question_am, answer_am FROM faqs WHERE is_active = true AND (${phraseConditions}) LIMIT 1`
-                    : `SELECT question_en, answer_en FROM faqs WHERE is_active = true AND (${phraseConditions}) LIMIT 1`;
-
-                const phraseParams = messageWords.map(word => `%${word}%`);
-                const phraseResult = await this.dbService.query(phraseQuery, phraseParams);
-
-                if (phraseResult.rows.length > 0) {
-                    const faq = phraseResult.rows[0];
-                    return language === 'am' ? faq.answer_am : faq.answer_en;
-                }
-            }
-
-            return null;
-        } catch (error) {
-            console.error('FAQ search error:', error);
-            return null;
         }
+
+        return null;
+    } catch (error) {
+        console.error('FAQ search error:', error);
+        return null;
     }
+}
 
     async searchCompanyInfo(message, language) {
-        try {
-            if (!this.dbService.isConnectedStatus()) {
-                return null;
-            }
-
-            const keywords = this.extractKeywords(message);
-
-            for (const keyword of keywords) {
-                const query = language === 'am'
-                    ? `SELECT content_am FROM company_info WHERE is_active = true AND $1 ~* (title_am || ' ' || content_am) LIMIT 1`
-                    : `SELECT content_en FROM company_info WHERE is_active = true AND $1 ~* (title_en || ' ' || content_en) LIMIT 1`;
-
-                const result = await this.dbService.query(query, [keyword]);
-
-                if (result.rows.length > 0) {
-                    return language === 'am' ? result.rows[0].content_am : result.rows[0].content_en;
-                }
-            }
-
-            return null;
-        } catch (error) {
-            console.error('Company info search error:', error);
+    try {
+        if (!this.dbService.isConnectedStatus()) {
             return null;
         }
-    }
 
-    extractKeywords(message) {
-        // Extract meaningful keywords from message
-        const words = message.split(' ').filter(word => word.length > 2);
-        return words;
+        const keywords = this.extractKeywords(message);
+
+        for (const keyword of keywords) {
+            const query = language === 'am'
+                ? `SELECT content_am FROM company_info WHERE is_active = true AND $1 ~* (title_am || ' ' || content_am) LIMIT 1`
+                : `SELECT content_en FROM company_info WHERE is_active = true AND $1 ~* (title_en || ' ' || content_en) LIMIT 1`;
+
+            const result = await this.dbService.query(query, [keyword]);
+
+            if (result.rows.length > 0) {
+                return language === 'am' ? result.rows[0].content_am : result.rows[0].content_en;
+            }
+        }
+
+        return null;
+    } catch (error) {
+        console.error('Company info search error:', error);
+        return null;
     }
+}
+
+extractKeywords(message) {
+    // Extract meaningful keywords from message
+    const words = message.split(' ').filter(word => word.length > 2);
+    return words;
+}
 
     async trackQuestion(message, language) {
-        try {
-            if (!this.dbService.isConnectedStatus()) {
-                return;
-            }
+    try {
+        if (!this.dbService.isConnectedStatus()) {
+            return;
+        }
 
-            const normalizedMessage = this.normalizeMessage(message);
+        const normalizedMessage = this.normalizeMessage(message);
 
-            await this.dbService.query(`
+        await this.dbService.query(`
                 INSERT INTO top_questions (question, question_normalized, language, ask_count, last_asked)
                 VALUES ($1, $2, $3, 1, CURRENT_TIMESTAMP)
                 ON CONFLICT (question_normalized, language)
@@ -346,28 +357,28 @@ class UnlimitedAIService {
                     last_asked = CURRENT_TIMESTAMP
             `, [message, normalizedMessage, language]);
 
-        } catch (error) {
-            console.error('Error tracking question:', error);
-        }
+    } catch (error) {
+        console.error('Error tracking question:', error);
     }
+}
 
-    getUltimateFallback(language) {
-        const responses = {
-            am: [
-                'እኔ ማንግግዎታለሁ! ይህ የተማማ መረጃ ለመልስ ይችላል። እባክዎን ተጨማማ መረጃ ይስጡ - በተለይ ምንኛውን ነገር ማወቅ ይፈልጉታለሁ?',
-                'ሰምአች እንደሚገት ነው! ይህ የተማማ መረጃ ለመልስ ይችላል። እባክዎን ተጨማማ መረጃ ይስጡ - በተለይ ምንኛውን ነገር ማወቅ ይፈልጉታለሁ?',
-                'ይቅርባል! እኔ የተማማ መረጃ ለመልስ ይችላል። እባክዎን ተጨማማ መረጃ ይስጡ - በተለይ ምንኛውን ነገር ማወቅ ይፈልጉታለሁ?'
-            ],
-            en: [
-                'I apologize, but I\'m having technical difficulties at the moment. Please try again in a few moments.',
-                'Thank you for your message! I\'m here to help with information and assistance. I can answer questions about various topics including science, geography, history, and general knowledge. What would you like to know more about?',
-                'I\'m experiencing some technical issues right now, but I\'m still here to help! Could you please rephrase your question or try again?'
-            ]
-        };
+getUltimateFallback(language) {
+    const responses = {
+        am: [
+            'እኔ ማንግግዎታለሁ! ይህ የተማማ መረጃ ለመልስ ይችላል። እባክዎን ተጨማማ መረጃ ይስጡ - በተለይ ምንኛውን ነገር ማወቅ ይፈልጉታለሁ?',
+            'ሰምአች እንደሚገት ነው! ይህ የተማማ መረጃ ለመልስ ይችላል። እባክዎን ተጨማማ መረጃ ይስጡ - በተለይ ምንኛውን ነገር ማወቅ ይፈልጉታለሁ?',
+            'ይቅርባል! እኔ የተማማ መረጃ ለመልስ ይችላል። እባክዎን ተጨማማ መረጃ ይስጡ - በተለይ ምንኛውን ነገር ማወቅ ይፈልጉታለሁ?'
+        ],
+        en: [
+            'I apologize, but I\'m having technical difficulties at the moment. Please try again in a few moments.',
+            'Thank you for your message! I\'m here to help with information and assistance. I can answer questions about various topics including science, geography, history, and general knowledge. What would you like to know more about?',
+            'I\'m experiencing some technical issues right now, but I\'m still here to help! Could you please rephrase your question or try again?'
+        ]
+    };
 
-        const randomIndex = Math.floor(Math.random() * responses[language].length);
-        return responses[language][randomIndex];
-    }
+    const randomIndex = Math.floor(Math.random() * responses[language].length);
+    return responses[language][randomIndex];
+}
 }
 
 module.exports = new UnlimitedAIService();
