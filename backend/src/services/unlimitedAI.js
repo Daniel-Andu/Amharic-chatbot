@@ -5,7 +5,6 @@ class UnlimitedAIService {
     constructor() {
         this.apiKey = process.env.GROQ_API_KEY;
         if (this.apiKey) {
-            const Groq = require('groq-sdk');
             this.groqService = new Groq({ apiKey: this.apiKey });
         }
 
@@ -38,7 +37,7 @@ class UnlimitedAIService {
             }
 
             if (normalizedMessage.includes('tell me about ethiopia')) {
-                return 'Ethiopia is a fascinating country in East Africa with a history spanning thousands of years. It\'s known as the cradle of humanity, home to ancient civilizations, origin of coffee, and has never been colonized. Its capital is Addis Ababa, and it\'s famous for landmarks like Lalibela\'s rock churches and the Simien Mountains.';
+                return 'Ethiopia is a fascinating country in East Africa with a history spanning thousands of years. It is known as the cradle of humanity, home to ancient civilizations, the origin of coffee, and has never been colonized. Its capital is Addis Ababa, and it is famous for landmarks like Lalibela rock churches and the Simien Mountains.';
             }
 
             // Amharic responses
@@ -53,10 +52,11 @@ class UnlimitedAIService {
             }
 
             // Default English response
-            return 'That\'s an excellent question! I can provide information about various topics including science, technology, geography, history, and general knowledge. What specific topic would you like to learn about?';
+            return 'That is an excellent question! I can provide information about various topics including science, technology, geography, history, and general knowledge. What specific topic would you like to learn about?';
+            
         } catch (error) {
             console.error('❌ Unlimited AI Service Error:', error);
-            return 'I apologize, but I\'m having technical difficulties at the moment. Please try again in a few moments.';
+            return 'I apologize, but I am having technical difficulties at the moment. Please try again in a few moments.';
         }
     }
 }
