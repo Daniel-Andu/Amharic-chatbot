@@ -82,6 +82,7 @@ const KnowledgeBase = () => {
     const [showAddFAQ, setShowAddFAQ] = useState(false);
     const [showUploadDoc, setShowUploadDoc] = useState(false);
     const [editingFAQ, setEditingFAQ] = useState(null);
+    const [documentReader, setDocumentReader] = useState({ isOpen: false, document: null });
     const [newFAQ, setNewFAQ] = useState({
         question: '',
         answer: '',
@@ -171,9 +172,13 @@ const KnowledgeBase = () => {
     };
 
     const viewDocument = (doc) => {
-        // In a real app, this would open the document
-        toast.success(`Viewing: ${doc.name}`);
-        console.log('View document:', doc);
+        // Open document in reader modal
+        setDocumentReader({
+            isOpen: true,
+            document: doc
+        });
+        toast.success(`Opening: ${doc.name}`);
+        console.log('Read document:', doc);
     };
 
     const downloadDocument = (doc) => {
@@ -381,15 +386,11 @@ const KnowledgeBase = () => {
                                 </div>
                                 <h4 className="font-semibold text-gray-800 mb-2 truncate">{doc.name}</h4>
                                 <p className="text-sm text-gray-600 mb-4">{doc.description}</p>
-                                <div className="flex items-center justify-between text-xs text-gray-500">
-                                    <span>{doc.size}</span>
-                                    <span>{doc.uploadDate}</span>
-                                </div>
                                 <div className="flex items-center gap-2 mt-4">
                                     <button
                                         onClick={() => viewDocument(doc)}
                                         className="text-blue-600 hover:text-blue-900"
-                                        title="View document"
+                                        title="Read document"
                                     >
                                         <Eye className="w-4 h-4" />
                                     </button>
@@ -410,136 +411,128 @@ const KnowledgeBase = () => {
                                 </div>
                             </div>
                         ))}
+                        <button
+                            onClick={() => {
+                                setShowAddFAQ(false);
+                                setEditingFAQ(null);
+                                setNewFAQ({ question: '', answer: '', category: 'general', language: 'english' });
+                            }}
+                            className="p-2 hover:bg-gray-100 rounded-lg"
+                        >
+                            <X className="w-5 h-5 text-gray-600" />
+                        </button>
                     </div>
-                </div>
-            )}
-
-            {(showAddFAQ || editingFAQ) && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-2xl mx-4">
-                        <div className="flex items-center justify-between mb-6">
-                            <h3 className="text-lg font-semibold text-gray-800">
-                                {editingFAQ ? 'Edit FAQ' : 'Add New FAQ'}
-                            </h3>
-                            <button
-                                onClick={() => {
-                                    setShowAddFAQ(false);
-                                    setEditingFAQ(null);
-                                    setNewFAQ({ question: '', answer: '', category: 'general', language: 'english' });
-                                }}
-                                className="p-2 hover:bg-gray-100 rounded-lg"
+                    <div className="space-y-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Language</label>
+                            <select
+                                value={newFAQ.language}
+                                onChange={(e) => setNewFAQ(prev => ({ ...prev, language: e.target.value }))}
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                             >
-                                <X className="w-5 h-5 text-gray-600" />
-                            </button>
+                                <option value="english">English</option>
+                                <option value="amharic">አማርኛ (Amharic)</option>
+                            </select>
                         </div>
-                        <div className="space-y-4">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Language</label>
-                                <select
-                                    value={newFAQ.language}
-                                    onChange={(e) => setNewFAQ(prev => ({ ...prev, language: e.target.value }))}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                                >
-                                    <option value="english">English</option>
-                                    <option value="amharic">አማርኛ (Amharic)</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                                <select
-                                    value={newFAQ.category}
-                                    onChange={(e) => setNewFAQ(prev => ({ ...prev, category: e.target.value }))}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                                >
-                                    {categories.map(cat => (
-                                        <option key={cat.value} value={cat.value}>{cat.label}</option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Question</label>
-                                <textarea
-                                    value={newFAQ.question}
-                                    onChange={(e) => setNewFAQ(prev => ({ ...prev, question: e.target.value }))}
-                                    placeholder={newFAQ.language === 'amharic' ? 'ጥያቄው ያስገልግ...' : 'Enter your question...'}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                                    rows={3}
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Answer</label>
-                                <textarea
-                                    value={newFAQ.answer}
-                                    onChange={(e) => setNewFAQ(prev => ({ ...prev, answer: e.target.value }))}
-                                    placeholder={newFAQ.language === 'amharic' ? 'መልሳትያሽ ያስገልግ...' : 'Enter your answer...'}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                                    rows={5}
-                                />
-                            </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                            <select
+                                value={newFAQ.category}
+                                onChange={(e) => setNewFAQ(prev => ({ ...prev, category: e.target.value }))}
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                            >
+                                {categories.map(cat => (
+                                    <option key={cat.value} value={cat.value}>{cat.label}</option>
+                                ))}
+                            </select>
                         </div>
-                        <div className="flex justify-end gap-3 mt-6">
-                            <button
-                                onClick={() => {
-                                    setShowAddFAQ(false);
-                                    setEditingFAQ(null);
-                                    setNewFAQ({ question: '', answer: '', category: 'general', language: 'english' });
-                                }}
-                                className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={editingFAQ ? updateFAQ : addFAQ}
-                                className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all duration-200"
-                            >
-                                {editingFAQ ? 'Update FAQ' : 'Add FAQ'}
-                            </button>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Question</label>
+                            <textarea
+                                value={newFAQ.question}
+                                onChange={(e) => setNewFAQ(prev => ({ ...prev, question: e.target.value }))}
+                                placeholder={newFAQ.language === 'amharic' ? 'ጥያቄው ያስገልግ...' : 'Enter your question...'}
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                rows={3}
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Answer</label>
+                            <textarea
+                                value={newFAQ.answer}
+                                onChange={(e) => setNewFAQ(prev => ({ ...prev, answer: e.target.value }))}
+                                placeholder={newFAQ.language === 'amharic' ? 'መልሳትያሽ ያስገልግ...' : 'Enter your answer...'}
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                rows={5}
+                            />
                         </div>
                     </div>
-                </div>
-            )}
-
-            {showUploadDoc && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md mx-4">
-                        <div className="flex items-center justify-between mb-6">
-                            <h3 className="text-lg font-semibold text-gray-800">Upload Document</h3>
-                            <button
-                                onClick={() => setShowUploadDoc(false)}
-                                className="p-2 hover:bg-gray-100 rounded-lg"
-                            >
-                                <X className="w-5 h-5 text-gray-600" />
-                            </button>
-                        </div>
-                        <div className="space-y-4">
-                            <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center">
-                                <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                                <p className="text-gray-600 mb-2">Drop your document here or click to browse</p>
-                                <p className="text-sm text-gray-500">Supports PDF, DOC, DOCX, XLSX, TXT files (Max 10MB)</p>
-                                <input
-                                    type="file"
-                                    onChange={(e) => {
-                                        const file = e.target.files[0];
-                                        if (file) {
-                                            uploadDocument(file);
-                                        }
-                                    }}
-                                    accept=".pdf,.doc,.docx,.xlsx,.txt"
-                                    className="hidden"
-                                    id="file-upload"
-                                />
-                                <label
-                                    htmlFor="file-upload"
-                                    className="mt-4 bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-2 rounded-lg hover:shadow-lg transition-all duration-200 cursor-pointer inline-block"
-                                >
-                                    Choose File
-                                </label>
-                            </div>
-                        </div>
+                    <div className="flex justify-end gap-3 mt-6">
+                        <button
+                            onClick={() => {
+                                setShowAddFAQ(false);
+                                setEditingFAQ(null);
+                                setNewFAQ({ question: '', answer: '', category: 'general', language: 'english' });
+                            }}
+                            className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={editingFAQ ? updateFAQ : addFAQ}
+                            className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all duration-200"
+                        >
+                            {editingFAQ ? 'Update FAQ' : 'Add FAQ'}
+                        </button>
                     </div>
                 </div>
-            )}
         </div>
+    )
+}
+
+{
+    showUploadDoc && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md mx-4">
+                <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-lg font-semibold text-gray-800">Upload Document</h3>
+                    <button
+                        onClick={() => setShowUploadDoc(false)}
+                        className="p-2 hover:bg-gray-100 rounded-lg"
+                    >
+                        <X className="w-5 h-5 text-gray-600" />
+                    </button>
+                </div>
+                <div className="space-y-4">
+                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center">
+                        <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                        <p className="text-gray-600 mb-2">Drop your document here or click to browse</p>
+                        <p className="text-sm text-gray-500">Supports PDF, DOC, DOCX, XLSX, TXT files (Max 10MB)</p>
+                        <input
+                            type="file"
+                            onChange={(e) => {
+                                const file = e.target.files[0];
+                                if (file) {
+                                    uploadDocument(file);
+                                }
+                            }}
+                            accept=".pdf,.doc,.docx,.xlsx,.txt"
+                            className="hidden"
+                            id="file-upload"
+                        />
+                        <label
+                            htmlFor="file-upload"
+                            className="mt-4 bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-2 rounded-lg hover:shadow-lg transition-all duration-200 cursor-pointer inline-block"
+                        >
+                            Choose File
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
+        </div >
     );
 };
 
