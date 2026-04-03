@@ -454,5 +454,7 @@ const AITraining = () => {
     }
 
     return (
+        // Rest of the code remains the same
+    );
 
-export default AITraining;
+    export default AITraining;
