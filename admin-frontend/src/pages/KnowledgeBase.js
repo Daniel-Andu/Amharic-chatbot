@@ -123,8 +123,8 @@ const KnowledgeBase = () => {
             return;
         }
 
-        setFaqs(prev => prev.map(faq => 
-            faq.id === editingFAQ.id 
+        setFaqs(prev => prev.map(faq =>
+            faq.id === editingFAQ.id
                 ? { ...faq, ...newFAQ }
                 : faq
         ));
@@ -156,8 +156,8 @@ const KnowledgeBase = () => {
         toast.success('Document uploaded successfully! Processing will complete shortly.');
 
         setTimeout(() => {
-            setDocuments(prev => prev.map(doc => 
-                doc.id === newDoc.id 
+            setDocuments(prev => prev.map(doc =>
+                doc.id === newDoc.id
                     ? { ...doc, status: 'processed' }
                     : doc
             ));
@@ -165,12 +165,35 @@ const KnowledgeBase = () => {
         }, 3000);
     };
 
-    const filteredFAQs = faqs.filter(faq => 
+    const deleteDocument = (id) => {
+        setDocuments(prev => prev.filter(doc => doc.id !== id));
+        toast.success('Document deleted successfully!');
+    };
+
+    const viewDocument = (doc) => {
+        // In a real app, this would open the document
+        toast.success(`Viewing: ${doc.name}`);
+        console.log('View document:', doc);
+    };
+
+    const downloadDocument = (doc) => {
+        // In a real app, this would download the document
+        toast.success(`Downloading: ${doc.name}`);
+        console.log('Download document:', doc);
+
+        // Create a mock download link
+        const link = document.createElement('a');
+        link.href = '#'; // In real app, this would be the actual file URL
+        link.download = doc.name;
+        link.click();
+    };
+
+    const filteredFAQs = faqs.filter(faq =>
         faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
         faq.answer.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const filteredDocs = documents.filter(doc => 
+    const filteredDocs = documents.filter(doc =>
         doc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         doc.description.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -200,11 +223,10 @@ const KnowledgeBase = () => {
                 <nav className="-mb-px flex space-x-8">
                     <button
                         onClick={() => setActiveTab('faqs')}
-                        className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                            activeTab === 'faqs'
-                                ? 'border-blue-500 text-blue-600'
-                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                        }`}
+                        className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === 'faqs'
+                            ? 'border-blue-500 text-blue-600'
+                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                            }`}
                     >
                         <div className="flex items-center gap-2">
                             <MessageSquare className="w-4 h-4" />
@@ -213,11 +235,10 @@ const KnowledgeBase = () => {
                     </button>
                     <button
                         onClick={() => setActiveTab('documents')}
-                        className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                            activeTab === 'documents'
-                                ? 'border-blue-500 text-blue-600'
-                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                        }`}
+                        className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === 'documents'
+                            ? 'border-blue-500 text-blue-600'
+                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                            }`}
                     >
                         <div className="flex items-center gap-2">
                             <FileText className="w-4 h-4" />
@@ -263,11 +284,10 @@ const KnowledgeBase = () => {
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                                    faq.language === 'amharic' 
-                                                        ? 'bg-green-100 text-green-800' 
-                                                        : 'bg-blue-100 text-blue-800'
-                                                }`}>
+                                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${faq.language === 'amharic'
+                                                    ? 'bg-green-100 text-green-800'
+                                                    : 'bg-blue-100 text-blue-800'
+                                                    }`}>
                                                     <Globe className="w-3 h-3 mr-1" />
                                                     {faq.language === 'amharic' ? 'አማርኛ' : 'English'}
                                                 </span>
@@ -278,11 +298,10 @@ const KnowledgeBase = () => {
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                                    faq.status === 'published' 
-                                                        ? 'bg-green-100 text-green-800' 
-                                                        : 'bg-yellow-100 text-yellow-800'
-                                                }`}>
+                                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${faq.status === 'published'
+                                                    ? 'bg-green-100 text-green-800'
+                                                    : 'bg-yellow-100 text-yellow-800'
+                                                    }`}>
                                                     <CheckCircle className="w-3 h-3 mr-1" />
                                                     {faq.status}
                                                 </span>
@@ -342,24 +361,21 @@ const KnowledgeBase = () => {
                         {filteredDocs.map((doc) => (
                             <div key={doc.id} className="bg-white rounded-2xl shadow-sm p-6 border border-gray-200 hover:shadow-md transition-shadow">
                                 <div className="flex items-start justify-between mb-4">
-                                    <div className={`p-3 rounded-lg ${
-                                        doc.type === 'pdf' ? 'bg-red-100' :
+                                    <div className={`p-3 rounded-lg ${doc.type === 'pdf' ? 'bg-red-100' :
                                         doc.type === 'docx' ? 'bg-blue-100' :
-                                        doc.type === 'xlsx' ? 'bg-green-100' :
-                                        'bg-gray-100'
-                                    }`}>
-                                        <FileText className={`w-6 h-6 ${
-                                            doc.type === 'pdf' ? 'text-red-600' :
+                                            doc.type === 'xlsx' ? 'bg-green-100' :
+                                                'bg-gray-100'
+                                        }`}>
+                                        <FileText className={`w-6 h-6 ${doc.type === 'pdf' ? 'text-red-600' :
                                             doc.type === 'docx' ? 'text-blue-600' :
-                                            doc.type === 'xlsx' ? 'text-green-600' :
-                                            'text-gray-600'
-                                        }`} />
+                                                doc.type === 'xlsx' ? 'text-green-600' :
+                                                    'text-gray-600'
+                                            }`} />
                                     </div>
-                                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                        doc.status === 'processed' 
-                                            ? 'bg-green-100 text-green-800' 
-                                            : 'bg-yellow-100 text-yellow-800'
-                                    }`}>
+                                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${doc.status === 'processed'
+                                        ? 'bg-green-100 text-green-800'
+                                        : 'bg-yellow-100 text-yellow-800'
+                                        }`}>
                                         {doc.status}
                                     </span>
                                 </div>
@@ -370,13 +386,25 @@ const KnowledgeBase = () => {
                                     <span>{doc.uploadDate}</span>
                                 </div>
                                 <div className="flex items-center gap-2 mt-4">
-                                    <button className="text-blue-600 hover:text-blue-900">
+                                    <button
+                                        onClick={() => viewDocument(doc)}
+                                        className="text-blue-600 hover:text-blue-900"
+                                        title="View document"
+                                    >
                                         <Eye className="w-4 h-4" />
                                     </button>
-                                    <button className="text-green-600 hover:text-green-900">
+                                    <button
+                                        onClick={() => downloadDocument(doc)}
+                                        className="text-green-600 hover:text-green-900"
+                                        title="Download document"
+                                    >
                                         <Download className="w-4 h-4" />
                                     </button>
-                                    <button className="text-red-600 hover:text-red-900">
+                                    <button
+                                        onClick={() => deleteDocument(doc.id)}
+                                        className="text-red-600 hover:text-red-900"
+                                        title="Delete document"
+                                    >
                                         <Trash2 className="w-4 h-4" />
                                     </button>
                                 </div>
