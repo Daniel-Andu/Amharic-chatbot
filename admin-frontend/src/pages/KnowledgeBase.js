@@ -366,174 +366,195 @@ const KnowledgeBase = () => {
                         {filteredDocs.map((doc) => (
                             <div key={doc.id} className="bg-white rounded-2xl shadow-sm p-6 border border-gray-200 hover:shadow-md transition-shadow">
                                 <div className="flex items-start justify-between mb-4">
-                                    <div className={`p-3 rounded-lg ${doc.type === 'pdf' ? 'bg-red-100' :
-                                        doc.type === 'docx' ? 'bg-blue-100' :
-                                            doc.type === 'xlsx' ? 'bg-green-100' :
-                                                'bg-gray-100'
-                                        }`}>
-                                        <FileText className={`w-6 h-6 ${doc.type === 'pdf' ? 'text-red-600' :
-                                            doc.type === 'docx' ? 'text-blue-600' :
-                                                doc.type === 'xlsx' ? 'text-green-600' :
-                                                    'text-gray-600'
-                                            }`} />
-                                    </div>
-                                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${doc.status === 'processed'
-                                        ? 'bg-green-100 text-green-800'
-                                        : 'bg-yellow-100 text-yellow-800'
-                                        }`}>
-                                        {doc.status}
-                                    </span>
-                                </div>
-                                <h4 className="font-semibold text-gray-800 mb-2 truncate">{doc.name}</h4>
-                                <p className="text-sm text-gray-600 mb-4">{doc.description}</p>
-                                <div className="flex items-center gap-2 mt-4">
-                                    <button
-                                        onClick={() => viewDocument(doc)}
-                                        className="text-blue-600 hover:text-blue-900"
-                                        title="Read document"
-                                    >
-                                        <Eye className="w-4 h-4" />
-                                    </button>
-                                    <button
-                                        onClick={() => downloadDocument(doc)}
-                                        className="text-green-600 hover:text-green-900"
-                                        title="Download document"
-                                    >
-                                        <Download className="w-4 h-4" />
-                                    </button>
-                                    <button
-                                        onClick={() => deleteDocument(doc.id)}
-                                        className="text-red-600 hover:text-red-900"
-                                        title="Delete document"
-                                    >
-                                        <Trash2 className="w-4 h-4" />
-                                    </button>
-                                </div>
+                                ))}
+                                </tbody>
+                            </table>
+                    </div>
+                </div>
+            </div>
+    )
+}
+
+{
+    activeTab === 'documents' && (
+        <div className="space-y-6">
+            <div className="flex justify-end">
+                <button
+                    onClick={() => setShowUploadDoc(true)}
+                    className="bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-2 rounded-lg hover:shadow-lg transition-all duration-200 flex items-center gap-2"
+                >
+                    <Upload className="w-4 h-4" />
+                    Upload Document
+                </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredDocs.map((doc) => (
+                    <div key={doc.id} className="bg-white rounded-2xl shadow-sm p-6 border border-gray-200 hover:shadow-md transition-shadow">
+                        <div className="flex items-start justify-between mb-4">
+                            <div className={`p-3 rounded-lg ${doc.type === 'pdf' ? 'bg-red-100' :
+                                doc.type === 'docx' ? 'bg-blue-100' :
+                                    doc.type === 'xlsx' ? 'bg-green-100' :
+                                        'bg-gray-100'
+                                }`}>
+                                <FileText className={`w-6 h-6 ${doc.type === 'pdf' ? 'text-red-600' :
+                                    doc.type === 'docx' ? 'text-blue-600' :
+                                        doc.type === 'xlsx' ? 'text-green-600' :
+                                            'text-gray-600'
+                                    }`} />
                             </div>
+                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${doc.status === 'processed'
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-yellow-100 text-yellow-800'
+                                }`}>
+                                {doc.status}
+                            </span>
+                        </div>
+                        <h4 className="font-semibold text-gray-800 mb-2 truncate">{doc.name}</h4>
+                        <p className="text-sm text-gray-600 mb-4">{doc.description}</p>
+                        <div className="flex items-center gap-2 mt-4">
+                            <button
+                                onClick={() => viewDocument(doc)}
+                                className="text-blue-600 hover:text-blue-900"
+                                title="Read document"
+                            >
+                                <Eye className="w-4 h-4" />
+                            </button>
+                            <button
+                                onClick={() => downloadDocument(doc)}
+                                className="text-green-600 hover:text-green-900"
+                                title="Download document"
+                            >
+                                <Download className="w-4 h-4" />
+                            </button>
+                            <button
+                                onClick={() => deleteDocument(doc.id)}
+                                className="text-red-600 hover:text-red-900"
+                                title="Delete document"
+                            >
+                                <Trash2 className="w-4 h-4" />
+                            </button>
+                        </div>
+                    </div>
+                ))}
+                <button
+                    onClick={() => {
+                        setShowAddFAQ(false);
+                        setEditingFAQ(null);
+                        setNewFAQ({ question: '', answer: '', category: 'general', language: 'english' });
+                    }}
+                    className="p-2 hover:bg-gray-100 rounded-lg"
+                >
+                    <X className="w-5 h-5 text-gray-600" />
+                </button>
+            </div>
+            <div className="space-y-4">
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Language</label>
+                    <select
+                        value={newFAQ.language}
+                        onChange={(e) => setNewFAQ(prev => ({ ...prev, language: e.target.value }))}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                    >
+                        <option value="english">English</option>
+                        <option value="amharic">አማርኛ (Amharic)</option>
+                    </select>
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                    <select
+                        value={newFAQ.category}
+                        onChange={(e) => setNewFAQ(prev => ({ ...prev, category: e.target.value }))}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                    >
+                        {categories.map(cat => (
+                            <option key={cat.value} value={cat.value}>{cat.label}</option>
                         ))}
+                    </select>
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Question</label>
+                    <textarea
+                        value={newFAQ.question}
+                        onChange={(e) => setNewFAQ(prev => ({ ...prev, question: e.target.value }))}
+                        placeholder={newFAQ.language === 'amharic' ? 'ጥያቄው ያስገልግ...' : 'Enter your question...'}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                        rows={3}
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Answer</label>
+                    <textarea
+                        value={newFAQ.answer}
+                        onChange={(e) => setNewFAQ(prev => ({ ...prev, answer: e.target.value }))}
+                        placeholder={newFAQ.language === 'amharic' ? 'መልሳትያሽ ያስገልግ...' : 'Enter your answer...'}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                        rows={5}
+                    />
+                </div>
+            </div>
+            <div className="flex justify-end gap-3 mt-6">
+                <button
+                    onClick={() => {
+                        setShowAddFAQ(false);
+                        setEditingFAQ(null);
+                        setNewFAQ({ question: '', answer: '', category: 'general', language: 'english' });
+                    }}
+                    className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                >
+                    Cancel
+                </button>
+                <button
+                    onClick={editingFAQ ? updateFAQ : addFAQ}
+                    className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all duration-200"
+                >
+                    {editingFAQ ? 'Update FAQ' : 'Add FAQ'}
+                </button>
+            </div>
+        </div>
+        </div >
+    </div >
+);
+
+    {
+        showUploadDoc && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md mx-4">
+                    <div className="flex items-center justify-between mb-6">
+                        <h3 className="text-lg font-semibold text-gray-800">Upload Document</h3>
                         <button
-                            onClick={() => {
-                                setShowAddFAQ(false);
-                                setEditingFAQ(null);
-                                setNewFAQ({ question: '', answer: '', category: 'general', language: 'english' });
-                            }}
+                            onClick={() => setShowUploadDoc(false)}
                             className="p-2 hover:bg-gray-100 rounded-lg"
                         >
                             <X className="w-5 h-5 text-gray-600" />
                         </button>
                     </div>
                     <div className="space-y-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Language</label>
-                            <select
-                                value={newFAQ.language}
-                                onChange={(e) => setNewFAQ(prev => ({ ...prev, language: e.target.value }))}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                            >
-                                <option value="english">English</option>
-                                <option value="amharic">አማርኛ (Amharic)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                            <select
-                                value={newFAQ.category}
-                                onChange={(e) => setNewFAQ(prev => ({ ...prev, category: e.target.value }))}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                            >
-                                {categories.map(cat => (
-                                    <option key={cat.value} value={cat.value}>{cat.label}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Question</label>
-                            <textarea
-                                value={newFAQ.question}
-                                onChange={(e) => setNewFAQ(prev => ({ ...prev, question: e.target.value }))}
-                                placeholder={newFAQ.language === 'amharic' ? 'ጥያቄው ያስገልግ...' : 'Enter your question...'}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                                rows={3}
+                        <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center">
+                            <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                            <p className="text-gray-600 mb-2">Drop your document here or click to browse</p>
+                            <p className="text-sm text-gray-500">Supports PDF, DOC, DOCX, XLSX, TXT files (Max 10MB)</p>
+                            <input
+                                type="file"
+                                onChange={(e) => {
+                                    const file = e.target.files[0];
+                                    if (file) {
+                                        uploadDocument(file);
+                                    }
+                                }}
+                                accept=".pdf,.doc,.docx,.xlsx,.txt"
+                                className="hidden"
+                                id="file-upload"
                             />
+                            <label
+                                htmlFor="file-upload"
+                                className="mt-4 bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-2 rounded-lg hover:shadow-lg transition-all duration-200 cursor-pointer inline-block"
+                            >
+                                Choose File
+                            </label>
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Answer</label>
-                            <textarea
-                                value={newFAQ.answer}
-                                onChange={(e) => setNewFAQ(prev => ({ ...prev, answer: e.target.value }))}
-                                placeholder={newFAQ.language === 'amharic' ? 'መልሳትያሽ ያስገልግ...' : 'Enter your answer...'}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                                rows={5}
-                            />
-                        </div>
-                    </div>
-                    <div className="flex justify-end gap-3 mt-6">
-                        <button
-                            onClick={() => {
-                                setShowAddFAQ(false);
-                                setEditingFAQ(null);
-                                setNewFAQ({ question: '', answer: '', category: 'general', language: 'english' });
-                            }}
-                            className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            onClick={editingFAQ ? updateFAQ : addFAQ}
-                            className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all duration-200"
-                        >
-                            {editingFAQ ? 'Update FAQ' : 'Add FAQ'}
-                        </button>
-                    </div>
-                </div>
-        </div>
-    )
-}
-
-{
-    showUploadDoc && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md mx-4">
-                <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-lg font-semibold text-gray-800">Upload Document</h3>
-                    <button
-                        onClick={() => setShowUploadDoc(false)}
-                        className="p-2 hover:bg-gray-100 rounded-lg"
-                    >
-                        <X className="w-5 h-5 text-gray-600" />
-                    </button>
-                </div>
-                <div className="space-y-4">
-                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center">
-                        <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                        <p className="text-gray-600 mb-2">Drop your document here or click to browse</p>
-                        <p className="text-sm text-gray-500">Supports PDF, DOC, DOCX, XLSX, TXT files (Max 10MB)</p>
-                        <input
-                            type="file"
-                            onChange={(e) => {
-                                const file = e.target.files[0];
-                                if (file) {
-                                    uploadDocument(file);
-                                }
-                            }}
-                            accept=".pdf,.doc,.docx,.xlsx,.txt"
-                            className="hidden"
-                            id="file-upload"
-                        />
-                        <label
-                            htmlFor="file-upload"
-                            className="mt-4 bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-2 rounded-lg hover:shadow-lg transition-all duration-200 cursor-pointer inline-block"
-                        >
-                            Choose File
-                        </label>
                     </div>
                 </div>
             </div>
-        </div>
-    )
-}
-        </div >
-    );
-};
-
-export default KnowledgeBase;
+        )
+    }

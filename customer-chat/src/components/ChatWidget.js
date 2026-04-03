@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { chatAPI } from '../services/api';
-import { Send, Mic, MicOff, Bot, User, Volume2, VolumeX } from 'lucide-react';
+import { Send, Mic, Bot, User, Volume2, VolumeX } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const ChatWidget = ({ embedded = false }) => {
