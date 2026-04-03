@@ -48,7 +48,7 @@ const AITraining = () => {
     const startTraining = async () => {
         setTrainingStatus('training');
         setTrainingProgress(0);
-        
+
         toast.success('AI training started! This may take 30-60 minutes.');
 
         // Simulate training progress
@@ -58,7 +58,7 @@ const AITraining = () => {
                     clearInterval(progressInterval);
                     setTrainingStatus('completed');
                     toast.success('AI training completed successfully!');
-                    
+
                     // Add to history
                     const newTraining = {
                         id: trainingHistory.length + 1,
@@ -81,6 +81,32 @@ const AITraining = () => {
         setTrainingStatus('idle');
         setTrainingProgress(0);
         toast.info('AI training stopped');
+    };
+
+    const viewTrainingData = () => {
+        // In a real app, this would open a modal or navigate to training data page
+        toast.success('Opening training data viewer...');
+        console.log('View Training Data clicked');
+
+        // Mock data for demonstration
+        const trainingData = trainingHistory.map((training, index) => ({
+            id: training.id,
+            date: training.date,
+            status: training.status,
+            duration: training.duration,
+            accuracy: training.accuracy,
+            samples: training.samples,
+            model: training.model
+        }));
+
+        console.log('Training Data:', trainingData);
+
+        // In a real app, you might:
+        // 1. Open a modal with detailed training data
+        // 2. Navigate to a dedicated training data page
+        // 3. Download as CSV/JSON
+        alert(`Training Data (${trainingData.length} records):\n\n` +
+            trainingData.map(t => `${t.date}: ${t.status} - ${t.accuracy}% accuracy`).join('\n'));
     };
 
     const modelOptions = [
@@ -125,7 +151,10 @@ const AITraining = () => {
                     <p className="text-gray-500">Retrain and improve AI model performance</p>
                 </div>
                 <div className="flex items-center gap-4">
-                    <button className="bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-2 rounded-lg hover:shadow-lg transition-all duration-200 flex items-center gap-2">
+                    <button
+                        onClick={viewTrainingData}
+                        className="bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-2 rounded-lg hover:shadow-lg transition-all duration-200 flex items-center gap-2"
+                    >
                         <Database className="w-4 h-4" />
                         View Training Data
                     </button>
