@@ -120,45 +120,29 @@ const Conversations = () => {
             // Handle ISO format and other string formats
             if (dateString.includes('T') && dateString.includes('Z')) {
                 // ISO format - remove Z to treat as local time
-                const localString = dateString.replace('Z', '');
-                date = new Date(localString);
-            } else if (dateString.includes('GMT')) {
-                // GMT format - extract date parts and create local date
-                const dateMatch = dateString.match(/(\w{3} \w{3} \d{2} \d{4} \d{2}:\d{2}:\d{2})/);
-                if (dateMatch) {
-                    const [, datePart] = dateMatch;
-                    date = new Date(datePart);
-                } else {
-                    date = new Date(dateString);
-                }
             } else {
-                // Other string format
                 date = new Date(dateString);
             }
-        } else if (typeof dateString === 'object') {
-            // If it's already a Date object, use it directly
-            date = dateString;
         } else {
-            // If it's a timestamp number
             date = new Date(dateString);
         }
 
         const now = new Date();
-        const diff = now - date;
+        const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-        const isAmharic = language === 'am' || language === 'amharic';
-
-        if (diff < 60000) return isAmharic ? 'አሁን' : 'Just now';
-        if (diff < 3600000) {
-            const minutes = Math.floor(diff / 60000);
-            return isAmharic ? `${minutes} ደቂቃዎች በፊት` : `${minutes} minutes ago`;
+        if (diffInSeconds < 60) {
+            return language === 'am' ? 'አሁን' : 'Just now';
+        } else if (diffInSeconds < 3600) {
+            const minutes = Math.floor(diffInSeconds / 60);
+            return language === 'am' ? `${minutes} ደቂቃዎች በፊት` : `${minutes} minutes ago`;
+        } else if (diffInSeconds < 86400) {
+            const hours = Math.floor(diffInSeconds / 3600);
+            const remainingMinutes = Math.floor((diffInSeconds % 3600) / 60);
+            return language === 'am' ? `${hours} ሰዓታት በፊት` : `${hours}h ${remainingMinutes}m ago`;
+        } else {
+            const days = Math.floor(diffInSeconds / 86400);
+            return language === 'am' ? `${days} ቀናት በፊት` : `${days} days ago`;
         }
-        if (diff < 86400000) {
-            const hours = Math.floor(diff / 3600000);
-            return isAmharic ? `${hours} ሰዓታት በፊት` : `${hours} hours ago`;
-        }
-        const days = Math.floor(diff / 86400000);
-        return isAmharic ? `${days} ቀናት በፊት` : `${days} days ago`;
     };
 
     const exportConversations = () => {
@@ -414,7 +398,7 @@ const Conversations = () => {
                             </div>
                             <div className="bg-gray-50 rounded-xl p-4">
                                 <p className="text-sm text-gray-600 mb-1">Duration</p>
-                                <p className="font-semibold text-gray-900">{formatDuration(selectedConversation.duration)}</p>
+                                <p className="font-semibold text-gray-900">{selectedConversation.duration || 'N/A'}</p>
                             </div>
                         </div>
 
@@ -439,7 +423,7 @@ const Conversations = () => {
                                             : 'bg-gray-100 text-gray-900'
                                             }`}>
                                             <p className="text-sm mb-2">{message.content}</p>
-                                            <p className="text-xs opacity-70">{formatRelativeTime(message.timestamp, selectedConversation.language)}</p>
+                                            <p className="text-xs opacity-70">{new Date(message.timestamp).toLocaleString()}</p>
                                         </div>
                                     </div>
                                 ))}
