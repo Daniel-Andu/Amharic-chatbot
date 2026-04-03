@@ -317,6 +317,12 @@ const ChatWidget = ({ embedded = false }) => {
                 // Get voices
                 let voices = window.speechSynthesis.getVoices();
 
+                // Ensure voices are loaded
+                if (voices.length === 0) {
+                    window.speechSynthesis.getVoices();
+                    voices = window.speechSynthesis.getVoices();
+                }
+
                 // If no voices yet, wait for them
                 if (voices.length === 0) {
                     window.speechSynthesis.onvoiceschanged = () => {
@@ -358,7 +364,7 @@ const ChatWidget = ({ embedded = false }) => {
                         console.log('⚠️ Amharic voice not found, using English voice for Amharic text');
 
                         // Show toast notification about Amharic voice limitation
-                        toast.info('Amharic voice not available - using English voice pronunciation', {
+                        toast('Amharic voice not available - using English voice pronunciation', {
                             duration: 3000,
                             icon: '🔊'
                         });
