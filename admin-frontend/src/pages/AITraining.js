@@ -35,6 +35,7 @@ const AITraining = () => {
             error: 'Insufficient training data'
         }
     ]);
+    const [showTrainingDataModal, setShowTrainingDataModal] = useState(false);
     const [trainingConfig, setTrainingConfig] = useState({
         epochs: 10,
         batchSize: 32,
@@ -84,29 +85,9 @@ const AITraining = () => {
     };
 
     const viewTrainingData = () => {
-        // In a real app, this would open a modal or navigate to training data page
-        toast.success('Opening training data viewer...');
+        setShowTrainingDataModal(true);
+        toast.success('Loading training data...');
         console.log('View Training Data clicked');
-
-        // Mock data for demonstration
-        const trainingData = trainingHistory.map((training, index) => ({
-            id: training.id,
-            date: training.date,
-            status: training.status,
-            duration: training.duration,
-            accuracy: training.accuracy,
-            samples: training.samples,
-            model: training.model
-        }));
-
-        console.log('Training Data:', trainingData);
-
-        // In a real app, you might:
-        // 1. Open a modal with detailed training data
-        // 2. Navigate to a dedicated training data page
-        // 3. Download as CSV/JSON
-        alert(`Training Data (${trainingData.length} records):\n\n` +
-            trainingData.map(t => `${t.date}: ${t.status} - ${t.accuracy}% accuracy`).join('\n'));
     };
 
     const modelOptions = [
@@ -372,6 +353,106 @@ const AITraining = () => {
             </div>
         </div>
     );
-};
+
+    // Training Data Modal
+    if (showTrainingDataModal) {
+        return (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-6xl mx-4 max-h-[80vh] overflow-y-auto">
+                    <div className="flex items-center justify-between mb-6">
+                        <div>
+                            <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+                                <Database className="w-6 h-6 text-blue-600" />
+                                Training Data History
+                            </h3>
+                            <p className="text-sm text-gray-500 mt-1">
+                                View and analyze all AI training sessions
+                            </p>
+                        </div>
+                        <button
+                            onClick={() => setShowTrainingDataModal(false)}
+                            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                        >
+                            <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
+                                <tr>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Model</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Samples</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Accuracy</th>
+                                </tr>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                                {trainingHistory.map((training, index) => (
+                                    <tr key={training.id} className="hover:bg-gray-50">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                            #{training.id}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                            {training.date}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                            {training.model}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="flex items-center gap-2">
+                                                {getStatusIcon(training.status)}
+                                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusBadge(training.status)}`}>
+                                                    {training.status.charAt(0).toUpperCase() + training.status.slice(1)}
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                            {training.duration}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                            {training.samples.toLocaleString()}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            {training.accuracy > 0 ? (
+                                                <span className="text-green-600">{training.accuracy}%</span>
+                                            ) : (
+                                                <span className="text-red-600">Failed</span>
+                                            )}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
+                        <div className="text-sm text-gray-500">
+                            Showing {trainingHistory.length} training records
+                        </div>
+                        <div className="flex gap-3">
+                            <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center gap-2">
+                                <FileText className="w-4 h-4" />
+                                Export CSV
+                            </button>
+                            <button
+                                onClick={() => setShowTrainingDataModal(false)}
+                                className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    return (
 
 export default AITraining;
