@@ -67,7 +67,10 @@ const ChatWidget = ({ embedded = false }) => {
         const time = new Date(timestamp);
         const diffInSeconds = Math.floor((now.getTime() - time.getTime()) / 1000);
 
-        if (diffInSeconds < 60) {
+        // Handle very recent messages (within 30 seconds)
+        if (diffInSeconds < 30) {
+            return language === 'am' ? 'አሁን' : 'just now';
+        } else if (diffInSeconds < 60) {
             return language === 'am' ? 'አሁን' : 'just now';
         } else if (diffInSeconds < 3600) {
             const minutes = Math.floor(diffInSeconds / 60);
@@ -363,11 +366,14 @@ const ChatWidget = ({ embedded = false }) => {
                         selectedLang = 'en-US';
                         console.log('⚠️ Amharic voice not found, using English voice for Amharic text');
 
-                        // Show toast notification about Amharic voice limitation
-                        toast('Amharic voice not available - using English voice pronunciation', {
-                            duration: 3000,
-                            icon: '🔊'
-                        });
+                        // Only show toast once per session
+                        if (!window.amharicVoiceNotified) {
+                            toast('Amharic voice not available - using English voice pronunciation', {
+                                duration: 3000,
+                                icon: '🔊'
+                            });
+                            window.amharicVoiceNotified = true;
+                        }
                     }
                 } else {
                     // Use English voice
@@ -427,21 +433,20 @@ const ChatWidget = ({ embedded = false }) => {
     };
 
     return (
-        <div className={`flex flex-col ${embedded ? 'h-full' : 'h-screen'} bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100`}>
-            {/* Header */}
-            <div className="bg-gradient-to-r from-blue-600 via-teal-600 to-indigo-700 text-white p-4 shadow-2xl border-b border-white/20">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg border-2 border-white/30">
-                            <Bot className="w-7 h-7 text-white" />
+        <div className={`flex flex-col h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 ${embedded ? 'rounded-lg shadow-2xl' : ''}`}>
+            {/* Header - Responsive */}
+            <div className="bg-black/30 backdrop-blur-md border-b border-white/10 p-3 sm:p-4">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-teal-600 rounded-full flex items-center justify-center shadow-lg">
+                            <Bot className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
                         </div>
-                        <div>
-                            <h3 className="font-bold text-lg bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
-                                AI Assistant
-                            </h3>
-                            <p className="text-xs text-blue-100 font-medium">
-                                {language === 'am' ? 'የአማርኛ ድጋፍ' : 'Amharic & English Support'}
-                            </p>
+                        <div className="hidden sm:block">
+                            <h3 className="text-white font-semibold text-sm sm:text-base">AI Assistant</h3>
+                            <p className="text-white/70 text-xs sm:text-sm">Powered by Groq AI</p>
+                        </div>
+                        <div className="sm:hidden">
+                            <h3 className="text-white font-semibold text-sm">AI</h3>
                         </div>
                     </div>
 
@@ -449,7 +454,7 @@ const ChatWidget = ({ embedded = false }) => {
                         <select
                             value={language}
                             onChange={(e) => handleLanguageChange(e.target.value)}
-                            className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg text-sm border border-white/30 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all"
+                            className="bg-white/20 backdrop-blur-sm text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm border border-white/30 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all"
                         >
                             <option value="am" className="text-gray-800">አማርኛ</option>
                             <option value="en" className="text-gray-800">English</option>
@@ -526,34 +531,34 @@ const ChatWidget = ({ embedded = false }) => {
                 <div ref={messagesEndRef} />
             </div>
 
-            {/* Input */}
-            <div className="bg-white/80 backdrop-blur-md border-t border-gray-200/50 p-4 shadow-2xl">
-                {/* Voice Status */}
-                <div className="flex items-center justify-between mb-3">
-                    <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:text-gray-800 transition-colors">
+            {/* Input - Mobile Responsive */}
+            <div className="bg-white/80 backdrop-blur-md border-t border-gray-200/50 p-3 sm:p-4 shadow-2xl">
+                {/* Voice Status - Mobile Optimized */}
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3 mb-2 sm:mb-3">
+                    <label className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 cursor-pointer hover:text-gray-800 transition-colors">
                         <input
                             type="checkbox"
                             checked={voiceEnabled}
                             onChange={(e) => setVoiceEnabled(e.target.checked)}
-                            className="rounded w-4 h-4 text-blue-600 focus:ring-blue-500"
+                            className="rounded w-3 h-3 sm:w-4 sm:h-4 text-blue-600 focus:ring-blue-500"
                         />
                         <span className="font-medium">
                             {language === 'am' ? '🔊 ድምጽ አንቃ (ራስ-ሰር)' : '🔊 Enable Voice (Auto-speak)'}
                         </span>
                     </label>
                     {isRecording && (
-                        <span className="text-sm text-red-500 animate-pulse flex items-center gap-2 font-medium">
-                            <span className="w-3 h-3 bg-red-500 rounded-full animate-ping"></span>
+                        <span className="text-xs sm:text-sm text-red-500 animate-pulse flex items-center gap-1 sm:gap-2 font-medium">
+                            <span className="w-2 h-2 sm:w-3 sm:h-3 bg-red-500 rounded-full animate-ping"></span>
                             {language === 'am' ? 'እያዳመጥኩ...' : '🎤 Listening...'}
                         </span>
                     )}
                 </div>
 
-                {/* Voice recording tip */}
+                {/* Voice recording tip - Mobile Optimized */}
                 {!isRecording && (
-                    <div className="mb-3 text-xs text-gray-500 flex items-center gap-2 bg-blue-50 p-2 rounded-lg border border-blue-200">
-                        <Mic className="w-4 h-4 text-blue-500" />
-                        <span className="font-medium">
+                    <div className="mb-2 sm:mb-3 text-xs text-gray-500 flex items-center gap-1 sm:gap-2 bg-blue-50 p-2 sm:p-3 rounded-lg border border-blue-200">
+                        <Mic className="w-3 h-3 sm:w-4 sm:h-4 text-blue-500" />
+                        <span className="font-medium text-xs sm:text-sm">
                             {language === 'am'
                                 ? 'የማይክሮፎን ቁልፍን ጠቅ በማድረግ የድምጽ መልእክት ይላኩ'
                                 : '🎤 Click microphone button to send voice message'}
@@ -561,17 +566,17 @@ const ChatWidget = ({ embedded = false }) => {
                     </div>
                 )}
 
-                <form onSubmit={handleSendMessage} className="flex gap-3">
+                <form onSubmit={handleSendMessage} className="flex gap-2 sm:gap-3">
                     <button
                         type="button"
                         onClick={handleVoiceInput}
-                        className={`p-4 rounded-xl transition-all transform hover:scale-105 ${isRecording
+                        className={`p-3 sm:p-4 rounded-xl transition-all transform hover:scale-105 ${isRecording
                             ? 'bg-gradient-to-r from-red-500 to-orange-600 text-white animate-pulse shadow-lg'
                             : 'bg-gradient-to-r from-blue-500 to-teal-600 text-white hover:from-blue-600 hover:to-teal-700 shadow-lg'
                             }`}
                         title={language === 'am' ? 'የድምጽ መልእክት ይቅዱ' : 'Record voice message'}
                     >
-                        {isRecording ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
+                        <Mic className="w-5 h-5 sm:w-6 sm:h-6" />
                     </button>
 
                     <input
@@ -579,7 +584,7 @@ const ChatWidget = ({ embedded = false }) => {
                         value={inputMessage}
                         onChange={(e) => setInputMessage(e.target.value)}
                         placeholder={language === 'am' ? '💬 መልእክት ይጻፉ...' : '💬 Type a message...'}
-                        className={`flex-1 px-5 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white/90 backdrop-blur-sm shadow-inner transition-all ${language === 'am' ? 'amharic-text' : ''
+                        className={`flex-1 px-3 py-3 sm:px-5 sm:py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white/90 backdrop-blur-sm shadow-inner transition-all text-sm sm:text-base ${language === 'am' ? 'amharic-text' : ''
                             }`}
                         disabled={loading || isRecording}
                     />
@@ -587,9 +592,9 @@ const ChatWidget = ({ embedded = false }) => {
                     <button
                         type="submit"
                         disabled={loading || !inputMessage.trim() || isRecording}
-                        className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                        className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-3 sm:p-4 rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
                     >
-                        <Send className="w-6 h-6" />
+                        <Send className="w-5 h-5 sm:w-6 sm:h-6" />
                     </button>
                 </form>
             </div>
