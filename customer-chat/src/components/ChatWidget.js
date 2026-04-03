@@ -433,20 +433,20 @@ const ChatWidget = ({ embedded = false }) => {
     };
 
     return (
-        <div className={`flex flex-col h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 ${embedded ? 'rounded-lg shadow-2xl' : ''}`}>
+        <div className={`flex flex-col h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 ${embedded ? 'rounded-lg shadow-2xl' : ''}`}>
             {/* Header - Responsive */}
-            <div className="bg-black/30 backdrop-blur-md border-b border-white/10 p-3 sm:p-4">
+            <div className="bg-white/80 backdrop-blur-md border-b border-gray-200/50 p-3 sm:p-4 shadow-sm">
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
                     <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-teal-600 rounded-full flex items-center justify-center shadow-lg">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center shadow-lg">
                             <Bot className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
                         </div>
                         <div className="hidden sm:block">
-                            <h3 className="text-white font-semibold text-sm sm:text-base">AI Assistant</h3>
-                            <p className="text-white/70 text-xs sm:text-sm">Powered by Groq AI</p>
+                            <h3 className="text-gray-800 font-semibold text-sm sm:text-base">AI Assistant</h3>
+                            <p className="text-gray-600 text-xs sm:text-sm">Powered by Advanced AI</p>
                         </div>
                         <div className="sm:hidden">
-                            <h3 className="text-white font-semibold text-sm">AI</h3>
+                            <h3 className="text-gray-800 font-semibold text-sm">AI</h3>
                         </div>
                     </div>
 
@@ -454,7 +454,7 @@ const ChatWidget = ({ embedded = false }) => {
                         <select
                             value={language}
                             onChange={(e) => handleLanguageChange(e.target.value)}
-                            className="bg-white/20 backdrop-blur-sm text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm border border-white/30 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all"
+                            className="bg-white/90 backdrop-blur-sm text-gray-700 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm border border-gray-300/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all shadow-sm"
                         >
                             <option value="am" className="text-gray-800">አማርኛ</option>
                             <option value="en" className="text-gray-800">English</option>
@@ -471,15 +471,15 @@ const ChatWidget = ({ embedded = false }) => {
                         className={`flex gap-3 ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
                         {msg.type === 'ai' && (
-                            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-teal-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg">
+                            <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg">
                                 <Bot className="w-6 h-6 text-white" />
                             </div>
                         )}
 
                         <div
                             className={`max-w-[75%] rounded-2xl px-5 py-4 shadow-lg backdrop-blur-sm transition-all hover:shadow-xl ${msg.type === 'user'
-                                ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white border border-blue-400/30'
-                                : 'bg-white/90 text-gray-800 border border-gray-200/50'
+                                ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white border border-emerald-400/30'
+                                : 'bg-white/95 text-gray-800 border border-gray-200/50'
                                 }`}
                         >
                             <div className="flex items-start justify-between gap-3">
@@ -489,13 +489,13 @@ const ChatWidget = ({ embedded = false }) => {
                                 {msg.type === 'ai' && (
                                     <button
                                         onClick={() => speakMessage(msg.content)}
-                                        className="flex-shrink-0 p-2 hover:bg-blue-50 rounded-lg transition-all group"
+                                        className="flex-shrink-0 p-2 hover:bg-emerald-50 rounded-lg transition-all group"
                                         title={language === 'am' ? 'ድምጽ ያድምጡ' : 'Listen to response'}
                                     >
                                         {isSpeaking ? (
-                                            <VolumeX className="w-4 h-4 text-blue-600 group-hover:text-blue-700" />
+                                            <VolumeX className="w-4 h-4 text-emerald-600 group-hover:text-emerald-700" />
                                         ) : (
-                                            <Volume2 className="w-4 h-4 text-gray-500 group-hover:text-blue-600" />
+                                            <Volume2 className="w-4 h-4 text-gray-500 group-hover:text-emerald-600" />
                                         )}
                                     </button>
                                 )}
@@ -506,7 +506,7 @@ const ChatWidget = ({ embedded = false }) => {
                         </div>
 
                         {msg.type === 'user' && (
-                            <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-teal-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg">
+                            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg">
                                 <User className="w-6 h-6 text-white" />
                             </div>
                         )}
@@ -515,14 +515,14 @@ const ChatWidget = ({ embedded = false }) => {
 
                 {loading && (
                     <div className="flex gap-3">
-                        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-teal-600 rounded-full flex items-center justify-center shadow-lg">
+                        <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center shadow-lg">
                             <Bot className="w-6 h-6 text-white" />
                         </div>
-                        <div className="bg-white/90 backdrop-blur-sm rounded-2xl px-5 py-4 shadow-lg border border-gray-200/50">
+                        <div className="bg-white/95 backdrop-blur-sm rounded-2xl px-5 py-4 shadow-lg border border-gray-200/50">
                             <div className="flex gap-2">
-                                <div className="w-3 h-3 bg-gradient-to-r from-blue-400 to-teal-400 rounded-full animate-bounce"></div>
+                                <div className="w-3 h-3 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-full animate-bounce"></div>
                                 <div className="w-3 h-3 bg-gradient-to-r from-teal-400 to-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                                <div className="w-3 h-3 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                                <div className="w-3 h-3 bg-gradient-to-r from-cyan-400 to-emerald-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                             </div>
                         </div>
                     </div>
@@ -540,7 +540,7 @@ const ChatWidget = ({ embedded = false }) => {
                             type="checkbox"
                             checked={voiceEnabled}
                             onChange={(e) => setVoiceEnabled(e.target.checked)}
-                            className="rounded w-3 h-3 sm:w-4 sm:h-4 text-blue-600 focus:ring-blue-500"
+                            className="rounded w-3 h-3 sm:w-4 sm:h-4 text-emerald-600 focus:ring-emerald-500"
                         />
                         <span className="font-medium">
                             {language === 'am' ? '🔊 ድምጽ አንቃ (ራስ-ሰር)' : '🔊 Enable Voice (Auto-speak)'}
@@ -556,8 +556,8 @@ const ChatWidget = ({ embedded = false }) => {
 
                 {/* Voice recording tip - Mobile Optimized */}
                 {!isRecording && (
-                    <div className="mb-2 sm:mb-3 text-xs text-gray-500 flex items-center gap-1 sm:gap-2 bg-blue-50 p-2 sm:p-3 rounded-lg border border-blue-200">
-                        <Mic className="w-3 h-3 sm:w-4 sm:h-4 text-blue-500" />
+                    <div className="mb-2 sm:mb-3 text-xs text-gray-500 flex items-center gap-1 sm:gap-2 bg-emerald-50 p-2 sm:p-3 rounded-lg border border-emerald-200">
+                        <Mic className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-500" />
                         <span className="font-medium text-xs sm:text-sm">
                             {language === 'am'
                                 ? 'የማይክሮፎን ቁልፍን ጠቅ በማድረግ የድምጽ መልእክት ይላኩ'
@@ -572,7 +572,7 @@ const ChatWidget = ({ embedded = false }) => {
                         onClick={handleVoiceInput}
                         className={`p-3 sm:p-4 rounded-xl transition-all transform hover:scale-105 ${isRecording
                             ? 'bg-gradient-to-r from-red-500 to-orange-600 text-white animate-pulse shadow-lg'
-                            : 'bg-gradient-to-r from-blue-500 to-teal-600 text-white hover:from-blue-600 hover:to-teal-700 shadow-lg'
+                            : 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white hover:from-emerald-600 hover:to-teal-700 shadow-lg'
                             }`}
                         title={language === 'am' ? 'የድምጽ መልእክት ይቅዱ' : 'Record voice message'}
                     >
@@ -584,7 +584,7 @@ const ChatWidget = ({ embedded = false }) => {
                         value={inputMessage}
                         onChange={(e) => setInputMessage(e.target.value)}
                         placeholder={language === 'am' ? '💬 መልእክት ይጻፉ...' : '💬 Type a message...'}
-                        className={`flex-1 px-3 py-3 sm:px-5 sm:py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white/90 backdrop-blur-sm shadow-inner transition-all text-sm sm:text-base ${language === 'am' ? 'amharic-text' : ''
+                        className={`flex-1 px-3 py-3 sm:px-5 sm:py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none bg-white/95 backdrop-blur-sm shadow-inner transition-all text-sm sm:text-base ${language === 'am' ? 'amharic-text' : ''
                             }`}
                         disabled={loading || isRecording}
                     />
@@ -592,13 +592,13 @@ const ChatWidget = ({ embedded = false }) => {
                     <button
                         type="submit"
                         disabled={loading || !inputMessage.trim() || isRecording}
-                        className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-3 sm:p-4 rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                        className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white p-3 sm:p-4 rounded-xl hover:from-emerald-600 hover:to-teal-700 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
                     >
                         <Send className="w-5 h-5 sm:w-6 sm:h-6" />
                     </button>
                 </form>
             </div>
-        </div >
+        </div>
     );
 };
 
