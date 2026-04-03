@@ -454,7 +454,354 @@ const AITraining = () => {
     }
 
     return (
-        // Rest of the code remains the same
-    );
+        <div className="space-y-6">
+            {/* Header */}
+            <div className="flex items-center justify-between">
+                <div>
+                    <h2 className="text-3xl font-bold text-gray-800">AI Training</h2>
+                    <p className="text-gray-500">Retrain and improve AI model performance</p>
+                </div>
+                <div className="flex items-center gap-4">
+                    <button
+                        onClick={viewTrainingData}
+                        className="bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-2 rounded-lg hover:shadow-lg transition-all duration-200 flex items-center gap-2"
+                    >
+                        <Database className="w-4 h-4" />
+                        View Training Data
+                    </button>
+                </div>
+            </div>
 
-    export default AITraining;
+            {/* Training Status Card */}
+            <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-200">
+                <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-lg font-semibold text-gray-800">Training Status</h3>
+                    <div className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusBadge(trainingStatus)}`}>
+                        {trainingStatus.charAt(0).toUpperCase() + trainingStatus.slice(1)}
+                    </div>
+                </div>
+
+                {trainingStatus === 'training' && (
+                    <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium text-gray-700">Training Progress</span>
+                            <span className="text-sm font-bold text-blue-600">{Math.round(trainingProgress)}%</span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-3">
+                            <div
+                                className="bg-gradient-to-r from-blue-600 to-purple-600 h-3 rounded-full transition-all duration-500"
+                                style={{ width: `${trainingProgress}%` }}
+                            ></div>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                            <div className="flex items-center gap-2 text-sm text-gray-600">
+                                <Brain className="w-4 h-4" />
+                                <span>Processing neural networks...</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-sm text-gray-600">
+                                <Database className="w-4 h-4" />
+                                <span>Optimizing parameters...</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-sm text-gray-600">
+                                <Zap className="w-4 h-4" />
+                                <span>Improving accuracy...</span>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {trainingStatus === 'completed' && (
+                    <div className="text-center py-8">
+                        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <CheckCircle className="w-8 h-8 text-green-600" />
+                        </div>
+                        <h4 className="text-xl font-semibold text-gray-800 mb-2">Training Completed Successfully!</h4>
+                        <p className="text-gray-600 mb-6">AI model has been trained and is ready for use.</p>
+                    </div>
+                )}
+
+                {trainingStatus === 'error' && (
+                    <div className="text-center py-8">
+                        <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <AlertCircle className="w-8 h-8 text-red-600" />
+                        </div>
+                        <h4 className="text-xl font-semibold text-gray-800 mb-2">Training Failed</h4>
+                        <p className="text-gray-600 mb-6">There was an error during training. Please try again.</p>
+                    </div>
+                )}
+            </div>
+
+            {/* Configuration */}
+            <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-800 mb-6">Training Configuration</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Model Type</label>
+                        <select
+                            value={trainingConfig.modelType}
+                            onChange={(e) => setTrainingConfig(prev => ({ ...prev, modelType: e.target.value }))}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                        >
+                            {modelOptions.map(option => (
+                                <option key={option.value} value={option.value}>
+                                    {option.label}
+                                </option>
+                            ))}
+                        </select>
+                        <p className="text-xs text-gray-500 mt-1">{modelOptions.find(opt => opt.value === trainingConfig.modelType)?.description}</p>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Epochs</label>
+                        <input
+                            type="number"
+                            value={trainingConfig.epochs}
+                            onChange={(e) => setTrainingConfig(prev => ({ ...prev, epochs: parseInt(e.target.value) }))}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                            min="1"
+                            max="100"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Batch Size</label>
+                        <input
+                            type="number"
+                            value={trainingConfig.batchSize}
+                            onChange={(e) => setTrainingConfig(prev => ({ ...prev, batchSize: parseInt(e.target.value) }))}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                            min="1"
+                            max="128"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Learning Rate</label>
+                        <input
+                            type="number"
+                            step="0.001"
+                            value={trainingConfig.learningRate}
+                            onChange={(e) => setTrainingConfig(prev => ({ ...prev, learningRate: parseFloat(e.target.value) }))}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                            min="0.001"
+                            max="0.1"
+                        />
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                    <div className="flex items-center">
+                        <input
+                            type="checkbox"
+                            id="useKnowledgeBase"
+                            checked={trainingConfig.useKnowledgeBase}
+                            onChange={(e) => setTrainingConfig(prev => ({ ...prev, useKnowledgeBase: e.target.checked }))}
+                            className="h-4 w-4 text-blue-600 rounded focus:ring-blue-500"
+                        />
+                        <label htmlFor="useKnowledgeBase" className="ml-2 text-sm text-gray-700">
+                            Use Knowledge Base
+                        </label>
+                    </div>
+                    <div className="flex items-center">
+                        <input
+                            type="checkbox"
+                            id="useConversations"
+                            checked={trainingConfig.useConversations}
+                            onChange={(e) => setTrainingConfig(prev => ({ ...prev, useConversations: e.target.checked }))}
+                            className="h-4 w-4 text-blue-600 rounded focus:ring-blue-500"
+                        />
+                        <label htmlFor="useConversations" className="ml-2 text-sm text-gray-700">
+                            Use Conversations
+                        </label>
+                    </div>
+                    <div className="flex items-center">
+                        <input
+                            type="checkbox"
+                            id="useFAQs"
+                            checked={trainingConfig.useFAQs}
+                            onChange={(e) => setTrainingConfig(prev => ({ ...prev, useFAQs: e.target.checked }))}
+                            className="h-4 w-4 text-blue-600 rounded focus:ring-blue-500"
+                        />
+                        <label htmlFor="useFAQs" className="ml-2 text-sm text-gray-700">
+                            Use FAQs
+                        </label>
+                    </div>
+                </div>
+
+                <div className="flex justify-center mt-6">
+                    <button
+                        onClick={startTraining}
+                        disabled={trainingStatus === 'training'}
+                        className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-xl hover:shadow-lg transition-all duration-200 flex items-center gap-2 mx-auto disabled:opacity-50"
+                    >
+                        <Play className="w-5 h-5" />
+                        {trainingStatus === 'training' ? 'Training...' : 'Start Training'}
+                    </button>
+                </div>
+            </div>
+
+            {/* Training History */}
+            <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-200">
+                <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-lg font-semibold text-gray-800">Training History</h3>
+                    <button
+                        onClick={() => resetToDefaults('training')}
+                        className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                    >
+                        Reset to Defaults
+                    </button>
+                </div>
+
+                <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                            <tr>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Model</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Samples</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Accuracy</th>
+                            </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                            {trainingHistory.map((training, index) => (
+                                <tr key={training.id} className="hover:bg-gray-50">
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        {training.id}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        {training.date}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        {training.model}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="flex items-center gap-2">
+                                            {getStatusIcon(training.status)}
+                                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusBadge(training.status)}`}>
+                                                {training.status.charAt(0).toUpperCase() + training.status.slice(1)}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        {training.duration}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        {training.samples.toLocaleString()}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        {training.accuracy > 0 ? (
+                                            <span className="text-green-600 font-medium">{training.accuracy}%</span>
+                                        ) : (
+                                            <span className="text-red-600 font-medium">Failed</span>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// Training Data Modal
+if (showTrainingDataModal) {
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-6xl mx-4 max-h-[80vh] overflow-y-auto">
+                <div className="flex items-center justify-between mb-6">
+                    <div>
+                        <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+                            <Database className="w-6 h-6 text-blue-600" />
+                            Training Data History
+                        </h3>
+                        <p className="text-sm text-gray-500 mt-1">
+                            View and analyze all AI training sessions
+                        </p>
+                    </div>
+                    <button
+                        onClick={() => setShowTrainingDataModal(false)}
+                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                    >
+                        <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                            <tr>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Model</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Samples</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Accuracy</th>
+                            </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                            {trainingHistory.map((training, index) => (
+                                <tr key={training.id} className="hover:bg-gray-50">
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                        #{training.id}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        {training.date}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        {training.model}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="flex items-center gap-2">
+                                            {getStatusIcon(training.status)}
+                                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusBadge(training.status)}`}>
+                                                {training.status.charAt(0).toUpperCase() + training.status.slice(1)}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        {training.duration}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        {training.samples.toLocaleString()}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        {training.accuracy > 0 ? (
+                                            <span className="text-green-600">{training.accuracy}%</span>
+                                        ) : (
+                                            <span className="text-red-600">Failed</span>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
+                    <div className="text-sm text-gray-500">
+                        Showing {trainingHistory.length} training records
+                    </div>
+                    <div className="flex gap-3">
+                        <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center gap-2">
+                            <FileText className="w-4 h-4" />
+                            Export CSV
+                        </button>
+                        <button
+                            onClick={() => setShowTrainingDataModal(false)}
+                            className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+export default AITraining;
