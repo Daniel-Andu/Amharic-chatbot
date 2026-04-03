@@ -94,6 +94,40 @@ const Settings = () => {
         }, 1500);
     };
 
+    const createBackup = () => {
+        // In a real app, this would create a backup of all settings and data
+        toast.success('Creating backup...');
+        console.log('Create Backup clicked');
+
+        // Mock backup creation
+        const backupData = {
+            timestamp: new Date().toISOString(),
+            settings: settings,
+            version: '1.0.0',
+            size: '2.4 MB'
+        };
+
+        console.log('Backup Data:', backupData);
+
+        // In a real app, you might:
+        // 1. Send to backup API
+        // 2. Show progress indicator
+        // 3. Store backup metadata
+        alert(`Backup created successfully!\n\nTimestamp: ${backupData.timestamp}\nSize: ${backupData.size}\nVersion: ${backupData.version}`);
+
+        // Update next backup time
+        const nextBackup = new Date();
+        nextBackup.setDate(nextBackup.getDate() + 1);
+        setSettings(prev => ({
+            ...prev,
+            backup: {
+                ...prev.backup,
+                lastBackup: nextBackup.toISOString(),
+                nextBackup: nextBackup.toISOString()
+            }
+        }));
+    };
+
     const testConnection = (type) => {
         setTestResults(prev => ({ ...prev, [type]: 'testing' }));
 
@@ -704,7 +738,10 @@ const Settings = () => {
                     </div>
                 </div>
                 <div className="flex gap-3 mt-4">
-                    <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    <button
+                        onClick={createBackup}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                    >
                         Create Backup Now
                     </button>
                     <button className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
@@ -766,8 +803,8 @@ const Settings = () => {
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                             className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === tab.id
-                                    ? 'border-blue-500 text-blue-600'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                ? 'border-blue-500 text-blue-600'
+                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                 }`}
                         >
                             <div className="flex items-center gap-2">
@@ -801,7 +838,7 @@ const Settings = () => {
                                     )}
                                     <span className="text-sm text-gray-700 capitalize">{type} connection</span>
                                     <span className={`text-sm font-medium ${result === 'success' ? 'text-green-600' :
-                                            result === 'testing' ? 'text-blue-600' : 'text-red-600'
+                                        result === 'testing' ? 'text-blue-600' : 'text-red-600'
                                         }`}>
                                         {result === 'success' ? 'Connected successfully' :
                                             result === 'testing' ? 'Testing...' : 'Connection failed'}
