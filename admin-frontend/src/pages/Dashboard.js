@@ -213,8 +213,8 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            {/* Real-time Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Real-time Stats Grid - Mobile Responsive */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                 <StatCard
                     icon={MessageSquare}
                     title="Total Conversations"
@@ -247,13 +247,13 @@ const Dashboard = () => {
                 />
                 <StatCard
                     icon={Users}
-                    title="Escalation Rate"
-                    value={`${Math.round(stats?.escalationRate || 0)}%`}
-                    change="-5.3%"
-                    color="text-red-600"
-                    bgColor="bg-gradient-to-br from-red-100 to-red-200"
-                    subtitle="Transferred to human"
-                    trend="down"
+                    title="Active Users"
+                    value={stats?.activeUsers?.toLocaleString() || '0'}
+                    change="+8.3%"
+                    color="text-purple-600"
+                    bgColor="bg-gradient-to-br from-purple-100 to-purple-200"
+                    subtitle="Currently online"
+                    trend="up"
                 />
             </div>
 
