@@ -140,7 +140,7 @@ const Analytics = () => {
                     <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-6 border border-gray-200/50">
                         <h3 className="text-lg font-semibold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent mb-4">📊 Conversation Volume</h3>
                         <ResponsiveContainer width="100%" height={300}>
-                            <BarChart data={analyticsData.conversationStats}>
+                            <BarChart data={analyticsData?.metrics?.conversationStats || []}>
                                 <CartesianGrid strokeDasharray="3 3" />
                                 <XAxis dataKey="name" />
                                 <YAxis />
@@ -156,7 +156,7 @@ const Analytics = () => {
                     <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-200">
                         <h3 className="text-lg font-semibold text-gray-800 mb-4">User Growth</h3>
                         <ResponsiveContainer width="100%" height={300}>
-                            <LineChart data={analyticsData?.userGrowth || []}>
+                            <LineChart data={analyticsData?.metrics?.userGrowth || []}>
                                 <CartesianGrid strokeDasharray="3 3" />
                                 <XAxis dataKey="month" />
                                 <YAxis />
@@ -173,7 +173,7 @@ const Analytics = () => {
                         <ResponsiveContainer width="100%" height={300}>
                             <PieChart>
                                 <Pie
-                                    data={analyticsData?.languageDistribution || []}
+                                    data={analyticsData?.metrics?.languageStats || []}
                                     cx="50%"
                                     cy="50%"
                                     labelLine={false}
@@ -182,7 +182,7 @@ const Analytics = () => {
                                     fill="#8884d8"
                                     dataKey="value"
                                 >
-                                    {(analyticsData?.languageDistribution || []).map((entry, index) => (
+                                    {(analyticsData?.metrics?.languageStats || []).map((entry, index) => (
                                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                     ))}
                                 </Pie>
@@ -196,7 +196,7 @@ const Analytics = () => {
                     <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-200">
                         <h3 className="text-lg font-semibold text-gray-800 mb-4">Response Time Trends</h3>
                         <ResponsiveContainer width="100%" height={300}>
-                            <LineChart data={analyticsData?.responseTimeData || []}>
+                            <LineChart data={analyticsData?.metrics?.responseTimeData || []}>
                                 <CartesianGrid strokeDasharray="3 3" />
                                 <XAxis dataKey="time" />
                                 <YAxis />
