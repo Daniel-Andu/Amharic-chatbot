@@ -22,6 +22,18 @@ const Analytics = () => {
     });
     const [loading, setLoading] = useState(true);
 
+    // Format duration to show days when > 24 hours
+    const formatDuration = (hours) => {
+        const days = Math.floor(hours / 24);
+        const remainingHours = Math.floor(hours % 24);
+        const minutes = Math.floor((hours % 1) * 60);
+
+        if (days > 0) {
+            return `${days}d ${remainingHours}h ${minutes}m`;
+        }
+        return `${remainingHours}h ${minutes}m`;
+    };
+
     // Fetch analytics data from API
     useEffect(() => {
         fetchAnalyticsData();
@@ -99,6 +111,31 @@ const Analytics = () => {
                 { name: 'አማርኛ', value: Math.floor(totalConv * 0.7) }
             ];
 
+            // Generate confidence trends with realistic values
+            const confidenceTrends = timeRange === '24h' ? [
+                { date: '00:00', confidence: 85 + Math.random() * 10 },
+                { date: '04:00', confidence: 87 + Math.random() * 8 },
+                { date: '08:00', confidence: 90 + Math.random() * 7 },
+                { date: '12:00', confidence: 88 + Math.random() * 9 },
+                { date: '16:00', confidence: 92 + Math.random() * 6 },
+                { date: '20:00', confidence: 89 + Math.random() * 8 }
+            ] : timeRange === '7d' ? days.map((day, index) => ({
+                date: day,
+                confidence: 85 + Math.random() * 12 + (index % 2)
+            })) : weeks.map((week, index) => ({
+                date: week,
+                confidence: 87 + Math.random() * 10 + (index % 3)
+            }));
+
+            // Generate top questions with realistic confidence
+            const topQuestions = [
+                { question: 'How do I change language?', count: 245, confidence: 94 },
+                { question: 'What are your capabilities?', count: 189, confidence: 91 },
+                { question: 'Can you help with Amharic?', count: 167, confidence: 88 },
+                { question: 'How does voice input work?', count: 134, confidence: 86 },
+                { question: 'What languages do you support?', count: 98, confidence: 93 }
+            ];
+
             setAnalyticsData({
                 metrics: data.metrics || {
                     totalConversations: totalConv,
@@ -110,7 +147,9 @@ const Analytics = () => {
                     userGrowth,
                     responseTimeData,
                     languageStats
-                }
+                },
+                confidenceTrends,
+                topQuestions
             });
 
         } catch (error) {
@@ -152,7 +191,7 @@ const Analytics = () => {
         },
         {
             title: 'AI Accuracy',
-            value: `${analyticsData?.metrics?.aiAccuracy || 0}%`,
+            value: `${Math.round(analyticsData?.metrics?.aiAccuracy || 0)}%`,
             change: '+2.1%',
             changeType: 'increase',
             icon: TrendingUp,

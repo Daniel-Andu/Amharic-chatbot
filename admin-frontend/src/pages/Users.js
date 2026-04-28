@@ -147,6 +147,21 @@ const UsersManagement = () => {
 
     const formatLastSeen = (dateString) => {
         if (!dateString) return 'Never';
+
+        // Check if it's a duration in hours (like "103.46" hours)
+        if (typeof dateString === 'number' || !isNaN(dateString)) {
+            const hours = parseFloat(dateString);
+            const days = Math.floor(hours / 24);
+            const remainingHours = Math.floor(hours % 24);
+            const minutes = Math.floor((hours % 1) * 60);
+
+            if (days > 0) {
+                return `${days}d ${remainingHours}h ${minutes}m`;
+            }
+            return `${remainingHours}h ${minutes}m`;
+        }
+
+        // Handle as timestamp
         const date = new Date(dateString);
         const now = new Date();
         const diff = now - date;
