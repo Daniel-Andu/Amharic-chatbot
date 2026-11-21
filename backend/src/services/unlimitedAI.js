@@ -1,6 +1,6 @@
 class UnlimitedAIService {
     constructor() {
-        this.apiKey = process.env.GROQ_API_KEY;
+        this.apiKey = this.normalizeApiKey(process.env.GROQ_API_KEY);
         if (this.apiKey) {
             const Groq = require('groq-sdk');
             this.groqService = new Groq({ apiKey: this.apiKey });
@@ -9,6 +9,23 @@ class UnlimitedAIService {
         console.log('🧠 Unlimited AI Service Configuration (Groq Llama 3):');
         console.log('   API Key exists:', !!this.apiKey);
         console.log('   Environment:', process.env.NODE_ENV || 'development');
+    }
+
+    normalizeApiKey(apiKey) {
+        if (!apiKey) {
+            return null;
+        }
+
+        const normalized = apiKey.trim();
+        if (
+            normalized === 'your_groq_api_key_here' ||
+            normalized === 'gsk_your_groq_api_key_here' ||
+            normalized === 'your-groq-api-key'
+        ) {
+            return null;
+        }
+
+        return normalized;
     }
 
     normalizeMessage(message) {
@@ -116,23 +133,42 @@ class UnlimitedAIService {
 
             console.log('🤖 Calling Groq API...');
 
-            const completion = await this.groqService.chat.completions.create({
-                messages: [
-                    { role: "system", content: systemPrompt },
-                    { role: "user", content: message }
-                ],
-                model: "llama-3.3-70b-versatile",
-                temperature: 0.7,
-                max_tokens: 1024,
-                top_p: 0.9,
-            });
+            const configuredModel = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
+            const models = [...new Set([configuredModel, 'llama-3.3-70b-versatile', 'llama-3.1-8b-instant'])];
+            let completion;
+            let usedModel;
+            let lastError;
+
+            for (const model of models) {
+                try {
+                    completion = await this.groqService.chat.completions.create({
+                        messages: [
+                            { role: "system", content: systemPrompt },
+                            { role: "user", content: message }
+                        ],
+                        model,
+                        temperature: 0.7,
+                        max_tokens: 1024,
+                        top_p: 0.9,
+                    });
+                    usedModel = model;
+                    break;
+                } catch (error) {
+                    lastError = error;
+                    console.error(`❌ Groq model "${model}" failed:`, error.message);
+                }
+            }
+
+            if (!completion) {
+                throw lastError || new Error('No Groq model returned a response');
+            }
 
             if (completion.choices && completion.choices[0] && completion.choices[0].message) {
                 let aiResponse = completion.choices[0].message.content.trim();
                 return {
                     response: aiResponse,
                     confidence: 0.85,
-                    model: 'llama-3.3-70b-versatile',
+                    model: usedModel,
                     language: language,
                     source: 'ai'
                 };

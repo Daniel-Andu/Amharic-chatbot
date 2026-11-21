@@ -32,3 +32,13 @@ test('uses the Groq response when the provider succeeds', async () => {
     assert.equal(result.source, 'ai');
     assert.equal(result.model, 'llama-3.3-70b-versatile');
 });
+
+test('treats placeholder Groq keys as unconfigured', async () => {
+    aiService.apiKey = aiService.normalizeApiKey('your_groq_api_key_here');
+    aiService.groqService = null;
+
+    assert.equal(aiService.apiKey, null);
+
+    const result = await aiService.getResponse('what is chemistry', 'en');
+    assert.equal(result.source, 'fallback');
+});

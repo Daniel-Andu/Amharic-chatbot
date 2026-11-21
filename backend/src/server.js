@@ -1,8 +1,9 @@
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const dbService = require('./database/database');
 const unlimitedAI = require('./services/unlimitedAI');
-require('dotenv').config({ path: '.env.local' });
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -42,6 +43,10 @@ app.get('/health', (req, res) => {
         timestamp: new Date().toISOString(),
         version: 'INTELLIGENT-AI-v2.0',
         database: dbService.isConnectedStatus() ? 'Connected' : 'Disconnected',
+        groqConfigured: Boolean(process.env.GROQ_API_KEY &&
+            process.env.GROQ_API_KEY.trim() &&
+            !['your_groq_api_key_here', 'gsk_your_groq_api_key_here', 'your-groq-api-key']
+                .includes(process.env.GROQ_API_KEY.trim())),
         environment: process.env.NODE_ENV || 'development'
     });
 });
