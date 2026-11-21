@@ -1,10 +1,8 @@
-const { DatabaseService } = require('../database/database');
-const Groq = require('groq-sdk');
-
 class UnlimitedAIService {
     constructor() {
         this.apiKey = process.env.GROQ_API_KEY;
         if (this.apiKey) {
+            const Groq = require('groq-sdk');
             this.groqService = new Groq({ apiKey: this.apiKey });
         }
 
@@ -25,6 +23,9 @@ class UnlimitedAIService {
 
         if (language === 'am') {
             // Amharic intelligent responses
+            if (lowerMessage.includes('ባዮሎጂ') || lowerMessage.includes('biology')) {
+                return 'ባዮሎጂ የሕይወትና የሕያዋን ፍጥረታት ሳይንሳዊ ጥናት ነው። ሕያዋን ፍጥረታት እንዴት እንደሚሠሩ፣ እንደሚያድጉ፣ እንደሚራቡ እና ከአካባቢያቸው ጋር እንዴት እንደሚገናኙ ያጠናል።';
+            }
             if (lowerMessage.includes('ሰላም') || lowerMessage.includes('hello') || lowerMessage.includes('hi')) {
                 return 'ሰላም! እንኳን ደህና መጡ። ማንኛውንም ጥያቄ ይጠይቁኝ።';
             }
@@ -49,6 +50,9 @@ class UnlimitedAIService {
             return 'እኔ ማንግግዎታለሁ።';
         } else {
             // English intelligent responses
+            if (lowerMessage.includes('biology') || lowerMessage.includes('biological')) {
+                return 'Biology is the scientific study of life and living organisms. It explores how organisms function, grow, reproduce, evolve, and interact with their environment. Major fields include genetics, ecology, evolution, and microbiology.';
+            }
             if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('hey')) {
                 return 'Hello! Welcome! How can I help you today?';
             }
@@ -93,11 +97,11 @@ class UnlimitedAIService {
         } catch (error) {
             console.error('❌ Unlimited AI Service Error:', error);
             return {
-                response: 'I apologize, but I am having technical difficulties at the moment. Please try again in a few moments.',
-                confidence: 0.1,
-                model: 'error',
+                response: this.generateIntelligentFallback(userMessage, language),
+                confidence: 0.6,
+                model: 'rule-based-fallback',
                 language: language,
-                source: 'error'
+                source: 'fallback'
             };
         }
     }
